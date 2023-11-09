@@ -5,7 +5,6 @@ using CMS.IO;
 
 using Kentico.Xperience.AzureStorage;
 using StarterSite;
-using Kentico.Xperience.Cloud;
 
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
@@ -56,7 +55,7 @@ namespace StarterSite
         {
             base.OnInit();
 
-            if (Environment.IsQa() || Environment.IsUat() || Environment.IsProduction())
+            if (Environment.IsProduction())
             {
                 // Maps the assets directory (e.g. media files) to the Azure storage provider
                 MapAzureStoragePath($"~/assets/");

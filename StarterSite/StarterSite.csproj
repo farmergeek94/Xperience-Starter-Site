@@ -1,14 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
-  <ItemGroup>
-    <Content Include="app_offline.htm_" Condition="Exists('app_offline.htm_')" CopyToPublishDirectory="PreserveNewest" />
-  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="kentico.xperience.admin" Version="27.0.3" />
     <PackageReference Include="kentico.xperience.azurestorage" Version="27.0.3" />
-    <PackageReference Include="kentico.xperience.cloud" Version="27.0.3" />
+    <PackageReference Include="Kentico.Xperience.Core" Version="27.0.3" />
     <PackageReference Include="kentico.xperience.imageprocessing" Version="27.0.3" />
     <PackageReference Include="kentico.xperience.webapp" Version="27.0.3" />
   </ItemGroup>
@@ -16,5 +13,8 @@
     <ProjectReference Include="..\StarterSite.Logic\StarterSite.Logic.csproj" />
     <ProjectReference Include="..\StarterSite.Models\StarterSite.Models.csproj" />
     <ProjectReference Include="..\StarterSite.Types\StarterSite.Types.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 </Project>
