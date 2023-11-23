@@ -1,0 +1,14 @@
+﻿@using Kentico.Web.Mvc
+@using Kentico.PageBuilder.Web.Mvc
+@inject IPageBuilderDataContextRetriever pageBuilderContext
+
+@model ComponentViewModel<Xperience.Community.InlineBootstrapSection.Components.Sections.InlineBootstrapSection.BootstrapRowSectionProperties>
+
+@if (pageBuilderContext.Retrieve().EditMode)
+{
+    Html.RenderPartial("~/Components/Sections/BootstrapRowSection/_BootstrapRowSectionEditor.cshtml", Model);
+}
+else
+{
+    Html.RenderPartial("~/Components/Sections/BootstrapRowSection/_BootstrapRowSectionDisplay.cshtml", Model);
+}

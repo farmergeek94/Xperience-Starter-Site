@@ -1,0 +1,11 @@
+﻿global using System;
+global using System.Collections.Generic;
+global using System.Linq;
+global using System.Text;
+global using System.Threading.Tasks;
+global using StarterSite.Logic.Services.Implmentations;
+global using StarterSite.Logic.Services.Interfaces;
+global using StarterSite.Logic.Repositories.Interfaces;
+global using StarterSite.Logic.Repositories.Implementations;
+global using StarterSite.Logic.Context;
+global using StarterSite.Models;

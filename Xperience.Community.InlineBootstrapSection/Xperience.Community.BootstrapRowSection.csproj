@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+    <AdminOrgName>xperience-community</AdminOrgName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Kentico.Xperience.Admin" Version="28.0.0" />
+  </ItemGroup>
+
+<ItemGroup>
+  <AdminClientPath Include="dist\**">
+    <ProjectName>inline-bootstrap-section</ProjectName>
+  </AdminClientPath>
+</ItemGroup>
+</Project>

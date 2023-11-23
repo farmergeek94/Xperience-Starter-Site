@@ -1,16 +1,27 @@
+using CMS.Core;
+using CMS.Websites;
 using Kentico.Content.Web.Mvc.Routing;
 using Kentico.PageBuilder.Web.Mvc;
 using Kentico.Web.Mvc;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using StarterSite.Logic;
+using StarterSite.Logic.Context;
+using StarterSite.RCL;
 using X;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+builder.Services.Configure<RazorViewEngineOptions>(options =>
+{
+    // Add Feature Folders
+    options.ViewLocationFormats.AddFeatureFolders();
+});
 
 // Enable desired Kentico Xperience features
 builder.Services.AddKentico(features =>
@@ -27,7 +38,10 @@ builder.Services.AddKentico(features =>
     // features.UseEmailMarketing();
 });
 
+// Define the 
 builder.Services.AddLogic();
+
+builder.Services.AddScoped<ILayoutContext, LayoutContext>();
 
 builder.Services.AddAuthentication();
 // builder.Services.AddAuthorization();
@@ -52,6 +66,6 @@ app.UseKentico();
 // app.UseAuthorization();
 
 app.Kentico().MapRoutes();
-app.MapGet("/", () => "The StarterSite site has not been configured yet.");
+//app.MapGet("/", () => "The StarterSite site has not been configured yet.");
 
 app.Run();

@@ -6,10 +6,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-    @RenderSectionAsync("Head", required: false)
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="/client/css/bundles/HeaderStyles.min.css" rel="stylesheet" />
+    @await RenderSectionAsync("Head", required: false)
+    <routed-page>
+        <page-builder-styles />
+    </routed-page>
 </head>
 <body>
-    @RenderSectionAsync("Body", required: false)
+    @await RenderSectionAsync("Body", required: false)
     <header class="p-3 bg-dark text-white">
         <div class="container">
             <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
@@ -40,8 +45,11 @@
         @RenderBody()
     </main>
     <footer>
-
     </footer>
-    @RenderSectionAsync("BodyEnd", required: false)
+    <script type="text/javascript" src="/client/js/bundles/FooterJS.min.js"></script>
+    @await RenderSectionAsync("BodyEnd", required: false)
+    <routed-page>
+        <page-builder-scripts />
+    </routed-page>
 </body>
 </html>

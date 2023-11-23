@@ -1,9 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StarterSite.Logic
 {
@@ -11,6 +6,12 @@ namespace StarterSite.Logic
     {
         public static IServiceCollection AddLogic(this IServiceCollection services)
         {
+            services.AddSingleton<IWebPageRepository, WebPageRepository>();
+            services.AddSingleton<IFaqRepository, FaqRepository>();
+            services.AddSingleton<IPageBuilderRepository, PageBuilderRepository>();
+
+            services.AddSingleton<ICacheScope, CacheScope>();
+            services.AddSingleton<ICacheKeyService, CacheKeyService>();
             return services;
         }
     }

@@ -1,0 +1,26 @@
+﻿@using Kentico.Web.Mvc
+@using Kentico.PageBuilder.Web.Mvc
+
+@model ComponentViewModel<Xperience.Community.InlineBootstrapSection.Components.Sections.InlineBootstrapSection.BootstrapRowSectionProperties>
+
+@Html.Raw(Model.Properties.HtmlBefore)
+<div class="@(string.IsNullOrWhiteSpace(Model.Properties.Container) ? "" : Model.Properties.Container)">
+    <div class="row">
+        @if (!Model.Properties.Columns.Any())
+        {
+            <div class="col-12">
+                @(await Html.Kentico().WidgetZoneAsync())
+            </div>
+        }
+        else
+        {
+            @foreach (var column in Model.Properties.Columns)
+            {
+                <div class="@($"{Model.Properties.Prefix}-{column.Size} {column.CustomClass}")">
+                    @(await Html.Kentico().WidgetZoneAsync(column.Id.ToString()))
+                </div>
+            }
+        }
+    </div>
+</div>
+@Html.Raw(Model.Properties.HtmlAfter)

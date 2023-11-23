@@ -1,10 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <StaticWebAssetBasePath Condition="$(StaticWebAssetBasePath) == ''">/client</StaticWebAssetBasePath>
+    <Configurations>Debug;Release;QA</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,12 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.24" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="src\css\" />
-    <Folder Include="src\typescript\" />
+    <Folder Include="src\js\" />
     <Folder Include="src\react\" />
     <Folder Include="src\scss\" />
   </ItemGroup>

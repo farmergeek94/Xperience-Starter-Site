@@ -1,7 +1,7 @@
 /// <binding ProjectOpened='Watch' />
 //list dependences
 import gulp from 'gulp';
-const { series, parallel, src, dest, task } = gulp;
+const { series, parallel, src, dest, task, watch } = gulp;
 import rename from 'gulp-rename';
 import * as dartSass from 'sass';
 import gulpSass from 'gulp-sass';
@@ -97,12 +97,7 @@ function validateJs(cb) {
 function footerJs(cb) {
     // Can optionally include your react apps here as well
     src([
-        "wwwroot/js/bootstrap/bootstrap.min.js",
-        "wwwroot/js/scripts/helpers.js",
-        "wwwroot/js/scripts/pbc/plugins.js",
-        "wwwroot/js/scripts/pbc/main.js",
-        "wwwroot/js/scripts/pbc/pbc.js",
-        "wwwroot/js/scripts/Custom.js",
+        "node_modules/bootstrap/dist/js/bootstrap.js",
     ], { base: "wwwroot/" })
         .pipe(concat("FooterJS.js"))
         .pipe(dest('wwwroot/js/bundles'))
@@ -116,24 +111,22 @@ function footerJs(cb) {
 }
 
 // packages.json's development task (npm run development) is set to execute this watch on visual studio open.
-const watch = () => {
+const development = (cb) => {
     //watch(["wwwroot/css/custom.css"], series(headerCss));
-    watch(["src/scss/*.scss"], function (cb) {
-        series(bootstrapSass, headerCss);
-        cb();
-    });
+    watch(["src/scss/*.scss"], series(bootstrapSass, headerCss));
     //watch(["FrontEndDev/react/components/blog/*.{ts,tsx,jsx}"], series(blogReactApp));
     //watch(["wwwroot/js/scripts/custom/*.{js}"], series(footerJs));
+    cb();
 }
 
 const build = parallel(
     series(bootstrapSass, headerCss),
     //series(headerJs, validateJs),
-    //series(footerJs),
+    series(footerJs),
     //series(blogReactApp)
 );
 
 export {
-    watch,
+    development,
     build
 } 
