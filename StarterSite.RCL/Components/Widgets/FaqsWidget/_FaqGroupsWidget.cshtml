@@ -1,11 +1,8 @@
-﻿@model StarterSite.RCL.Components.Widgets.Faqs.FaqsWidgetModel
+﻿@model IEnumerable<GroupItem>
 
-@if (Model.ShowGroupHeaders)
-{
-
-    var groupGuid = Guid.NewGuid();
+    @{var groupGuid = Guid.NewGuid(); }
     <div class="accordion" id="@groupGuid">
-        @foreach (var group in Model.Groups)
+        @foreach (var group in Model)
         {
             var grooupItemGuid = Guid.NewGuid();
             var faqGuid = Guid.NewGuid();
@@ -41,27 +38,3 @@
             </div>
         }
     </div>
-}
-else
-{
-    var faqs = Model.Groups.SelectMany(x => x.Faqs).OrderBy(x => x.FaqQuestion);
-    var faqGuid = Guid.NewGuid();
-    <div class="accordion" id="@faqGuid">
-        @foreach (var faq in faqs)
-        {
-            var guid = Guid.NewGuid();
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="@("heading" + guid)">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="@("#collapse" + guid)" aria-expanded="false" aria-controls="@("collapse" + guid)">
-                        @faq.FaqQuestion
-                    </button>
-                </h2>
-                <div id="@("collapse" + guid)" class="accordion-collapse collapse" aria-labelledby="@("heading" + guid)" data-bs-parent="#@faqGuid">
-                    <div class="accordion-body">
-                        @Html.Raw(faq.FaqAnswer)
-                    </div>
-                </div>
-            </div>
-        }
-    </div>
-}

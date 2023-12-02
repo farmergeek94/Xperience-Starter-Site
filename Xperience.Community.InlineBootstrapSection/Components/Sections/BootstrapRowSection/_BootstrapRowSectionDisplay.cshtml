@@ -1,26 +1,32 @@
 ﻿@using Kentico.Web.Mvc
 @using Kentico.PageBuilder.Web.Mvc
+@addTagHelper *, Xperience.Community.BootstrapRowSection
 
-@model ComponentViewModel<Xperience.Community.InlineBootstrapSection.Components.Sections.InlineBootstrapSection.BootstrapRowSectionProperties>
+@model ComponentViewModel<Xperience.Community.BootstrapRowSection.Components.Sections.BootstrapRowSection.BootstrapRowSectionProperties>
 
 @Html.Raw(Model.Properties.HtmlBefore)
-<div class="@(string.IsNullOrWhiteSpace(Model.Properties.Container) ? "" : Model.Properties.Container)">
-    <div class="row">
-        @if (!Model.Properties.Columns.Any())
-        {
-            <div class="col-12">
-                @(await Html.Kentico().WidgetZoneAsync())
-            </div>
-        }
-        else
-        {
-            @foreach (var column in Model.Properties.Columns)
+<container class="@Model.Properties.ContainerBackground">
+    <container class="@Model.Properties.Container">
+        <div class="row @Model.Properties.RowDirection @Model.Properties.RowCustomCss @(Model.Properties.NoPadding ? "g-0" : "")">
+            @if (!Model.Properties.Columns.Any())
             {
-                <div class="@($"{Model.Properties.Prefix}-{column.Size} {column.CustomClass}")">
-                    @(await Html.Kentico().WidgetZoneAsync(column.Id.ToString()))
+                <div class="col-12">
+                    @(await Html.Kentico().WidgetZoneAsync())
                 </div>
             }
-        }
-    </div>
-</div>
+            else
+            {
+                @foreach (var column in Model.Properties.Columns)
+                {
+                    var paddingY = string.IsNullOrWhiteSpace(column.GutterY) ? "" : column.GutterY;
+                    var paddingX = string.IsNullOrWhiteSpace(column.GutterX) ? "" : column.GutterX;
+                    var classes = (new string[] { $"{Model.Properties.Prefix}-{column.Size}", column.CustomClass, paddingY, paddingX }).Where(x => !string.IsNullOrWhiteSpace(x));
+                    <div class="@(string.Join(" ", classes))">
+                        @(await Html.Kentico().WidgetZoneAsync(column.Id.ToString()))
+                    </div>
+                }
+            }
+        </div>
+    </container>
+</container>
 @Html.Raw(Model.Properties.HtmlAfter)

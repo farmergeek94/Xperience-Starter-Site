@@ -1,4 +1,5 @@
-﻿using StarterSite.Models;
+﻿using StarterSite.Logic.Library;
+using StarterSite.Models;
 
 namespace StarterSite.Logic.Services.Interfaces
 {

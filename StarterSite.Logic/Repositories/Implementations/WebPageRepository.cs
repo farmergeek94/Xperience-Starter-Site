@@ -98,8 +98,12 @@ namespace StarterSite.Logic.Repositories.Implementations
 
         public async Task<WebPageItem<TI>> GetPageItem<T, TI>(int id, Func<T, TI> dataMapper, string language = "en", bool forPreview = false) where T : IWebPageFieldsSource, new() where TI : new()
         {
+            var cacheKeys = _cacheKeyService.Create();
+            cacheKeys.Page(id);
+
             // Get the page type from the type passed in. 
             string pageType = ((string?)typeof(T).GetField("CONTENT_TYPE_NAME")?.GetValue(null)) ?? "";
+            string channel = _websiteChannelContext.WebsiteChannelName;
             var builder = new ContentItemQueryBuilder()
                         .ForContentType(
                             // Scopes the query to pages of the 'My.ArticlePage' content type
@@ -114,11 +118,15 @@ namespace StarterSite.Logic.Repositories.Implementations
             // Executes the query and stores the data in generated 'ArticlePage' models
             IEnumerable<T> pages = await _progressiveCache.LoadAsync(async cs =>
             {
+                if (cs.Cached)
+                {
+                    cs.CacheDependency = cacheKeys.GetCMSCacheDependency();
+                }
                 return await _executor.GetWebPageResult(
                                                         builder: builder,
                                                         resultSelector: _mapper.Map<T>,
                                                         options: new ContentQueryExecutionOptions { ForPreview = forPreview });
-            }, new CacheSettings(CacheTiming.VeryLong, "GetFullPageItem", language, id, pageType));
+            }, new CacheSettings(CacheTiming.VeryLong, "GetFullPageItem", language, id, pageType, forPreview, channel));
 
             var page = pages.FirstOrDefault();
 

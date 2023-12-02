@@ -4,17 +4,20 @@
     <Configurations>Debug;Release;QA</Configurations>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="kentico.xperience.admin" Version="28.0.0" />
-    <PackageReference Include="kentico.xperience.azurestorage" Version="28.0.0" />
-    <PackageReference Include="kentico.xperience.imageprocessing" Version="28.0.0" />
-    <PackageReference Include="kentico.xperience.webapp" Version="28.0.0" />
+    <PackageReference Include="kentico.xperience.admin" Version="28.0.1" />
+    <PackageReference Include="kentico.xperience.azurestorage" Version="28.0.1" />
+    <PackageReference Include="kentico.xperience.imageprocessing" Version="28.0.1" />
+    <PackageReference Include="kentico.xperience.webapp" Version="28.0.1" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\HBS.Xperience.Categories\HBS.Xperience.Categories.csproj" />
+    <ProjectReference Include="..\HBS.Xperience.TransformableViews\HBS.Xperience.TransformableViews.csproj" />
     <ProjectReference Include="..\StarterSite.Client\StarterSite.Client.csproj" />
     <ProjectReference Include="..\StarterSite.Logic\StarterSite.Logic.csproj" />
     <ProjectReference Include="..\StarterSite.Models\StarterSite.Models.csproj" />
     <ProjectReference Include="..\StarterSite.RCL\StarterSite.RCL.csproj" />
     <ProjectReference Include="..\StarterSite.Types\StarterSite.Types.csproj" />
+    <ProjectReference Include="..\Xperience.Community.ImageWidget\Xperience.Community.ImageWidget.csproj" />
     <ProjectReference Include="..\Xperience.Community.InlineBootstrapSection\Xperience.Community.BootstrapRowSection.csproj" />
   </ItemGroup>
   <ItemGroup>

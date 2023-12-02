@@ -1,14 +1,18 @@
 ﻿using CMS;
+using CMS.Core;
+using CMS.DataEngine;
 using Kentico.Xperience.Admin.Base;
+using Kentico.Xperience.Admin.Base.FormAnnotations;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Xperience.Community.InlineBootstrapSection;
+using Xperience.Community.BootstrapRowSection;
 
-[assembly: RegisterModule(typeof(Module))]
-namespace Xperience.Community.InlineBootstrapSection
+[assembly: RegisterModule(typeof(Xperience.Community.BootstrapRowSection.Module))]
+namespace Xperience.Community.BootstrapRowSection
 {
     public class Module : AdminModule
     {

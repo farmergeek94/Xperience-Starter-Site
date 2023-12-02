@@ -2,7 +2,8 @@
 {
     public interface IFaqRepository
     {
-        Task<IEnumerable<FaqItem>> GetFaqs(IEnumerable<Guid>? groupIds = null, string language = "en");
-        Task<IEnumerable<GroupItem>> GetFaqsGroups(IEnumerable<Guid> groupIds, string language = "en");
+        Task<IEnumerable<FaqItem>> GetFaqs(IEnumerable<int>? categories = null, string language = "en");
+        Task<IEnumerable<FaqItem>> GetFaqsByCategory(IEnumerable<int> categories, string language = "en");
+        Task<IEnumerable<GroupItem>> GetFaqsGroups(IEnumerable<int> categories, string language = "en");
     }
 }

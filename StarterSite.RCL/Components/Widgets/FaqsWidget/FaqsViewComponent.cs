@@ -1,10 +1,11 @@
 ﻿using CMS.ContentEngine;
+using HBS.Xperience.Categories.Admin.FormComponents;
 using Kentico.Forms.Web.Mvc;
 using Kentico.PageBuilder.Web.Mvc;
 using Kentico.Xperience.Admin.Base.FormAnnotations;
 using StarterSite.Logic.Context;
 using StarterSite.Logic.Repositories.Interfaces;
-using StarterSite.RCL.Components.Widgets.Faqs;
+using StarterSite.RCL.Components.Widgets.FaqsWidget;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +21,7 @@ using X;
     IconClass = "icon-question-circle",
     AllowCache = true)]
 
-namespace StarterSite.RCL.Components.Widgets.Faqs
+namespace StarterSite.RCL.Components.Widgets.FaqsWidget
 {
     public class FaqsViewComponent : ViewComponent
     {
@@ -36,26 +37,35 @@ namespace StarterSite.RCL.Components.Widgets.Faqs
         {
             // begin the collection of the cache keys
             _cacheScope.BeginWidget();
-
-            var groups = await _faqRepository.GetFaqsGroups(properties.Properties.SelectedGroups.Select(x=>x.Identifier));
-
-            // add in the collected keys to the widgets cache depedencies
-            properties.CacheDependencies.CacheKeys = _cacheScope.End();
-
-            return View("~/Components/Widgets/Faqs/_Faqs.cshtml", new FaqsWidgetModel
+            if (properties.Properties.UseGroups)
             {
-                ShowGroupHeaders = properties.Properties.ShowGroupHeaders,
-                Groups = groups
-            });
+                var groups = await _faqRepository.GetFaqsGroups(properties.Properties.SelectedCategories);
+
+                // add in the collected keys to the widgets cache depedencies
+                properties.CacheDependencies.CacheKeys = _cacheScope.End();
+
+                return View("~/Components/Widgets/FaqsWidget/_FaqGroupsWidget.cshtml", groups);
+            } 
+            else
+            {
+                var faqs = await _faqRepository.GetFaqsByCategory(properties.Properties.SelectedCategories);
+
+                // add in the collected keys to the widgets cache depedencies
+                properties.CacheDependencies.CacheKeys = _cacheScope.End();
+
+                return View("~/Components/Widgets/FaqsWidget/_FaqsWidget.cshtml", faqs);
+            }
         }
     }
     public class FaqsProperties : IWidgetProperties
     {
         
-        [ContentItemSelectorComponent(Group.CONTENT_TYPE_NAME, Label = "Selected Faq Groups", Order = 1, AllowContentItemCreation = false)]
-        public IEnumerable<ContentItemReference> SelectedGroups { get; set; } = new List<ContentItemReference>();
+        [CategoryListFormComponent(Label = "Selected Categories", Order = 1)]
+        public IEnumerable<int> SelectedCategories { get; set; } = Enumerable.Empty<int>();
 
-        [CheckBoxComponent(Label = "Show Group Headers")]
-        public bool ShowGroupHeaders { get; set; } = false;
+
+
+        [CheckBoxComponent(Label = "Use Groups")]
+        public bool UseGroups { get; set; } = false;
     }
 }

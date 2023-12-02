@@ -11976,3 +11976,10 @@ textarea.form-control-lg {
     display: none !important;
   }
 }
+img {
+  max-width: 100%;
+}
+
+.dropdown:hover > .dropdown-menu {
+  display: block !important;
+}

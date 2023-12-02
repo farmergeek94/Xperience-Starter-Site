@@ -1,32 +1,40 @@
 ﻿@using Kentico.Web.Mvc
 @using Kentico.PageBuilder.Web.Mvc
+@addTagHelper *, Xperience.Community.BootstrapRowSection
 
-@model ComponentViewModel<Xperience.Community.InlineBootstrapSection.Components.Sections.InlineBootstrapSection.BootstrapRowSectionProperties>
+@model ComponentViewModel<Xperience.Community.BootstrapRowSection.Components.Sections.BootstrapRowSection.BootstrapRowSectionProperties>
 
 @Html.Raw(Model.Properties.HtmlBefore)
-<div class="@(string.IsNullOrWhiteSpace(Model.Properties.Container) ? "" : Model.Properties.Container)" style="position: relative">
-    <div class="row">
-        @if (!Model.Properties.Columns.Any())
-        {
-            <div class="col-12">
-                @(await Html.Kentico().WidgetZoneAsync())
-            </div>
-        }
-        else
-        {
+<container class="@Model.Properties.ContainerBackground">
+    <container class="@Model.Properties.Container">
+        <div style="position: relative">
+            <div class="row @Model.Properties.RowDirection @Model.Properties.RowCustomCss @(Model.Properties.NoPadding ? "g-0" : "")">
+                @if (!Model.Properties.Columns.Any())
+                {
+                    <div class="col-12">
+                        @(await Html.Kentico().WidgetZoneAsync())
+                    </div>
+                }
+                else
+                {
 
-            @foreach (var column in Model.Properties.Columns)
-            {
-                <div class="@($"{Model.Properties.Prefix}-{column.Size} {column.CustomClass}")">
-                    @(await Html.Kentico().WidgetZoneAsync(column.Id.ToString()))
-                </div>
-            }
-            var columnTotal = Model.Properties.Columns.Sum(x => x.Size);
-            @for (var i = columnTotal; i < 12; i++)
-            {
-                <div class="col-1 column-display"><div style="background-color: #e5dedc; border-radius: 10px; height: 100%; "></div></div>
-            }
-        }
-    </div>
-</div>
+                    @foreach (var column in Model.Properties.Columns)
+                    {
+                        var paddingY = string.IsNullOrWhiteSpace(column.GutterY) ? "" : column.GutterY;
+                        var paddingX = string.IsNullOrWhiteSpace(column.GutterX) ? "" : column.GutterX;
+                        var classes = (new string[] { $"{Model.Properties.Prefix}-{column.Size}", column.CustomClass, paddingY, paddingX }).Where(x => !string.IsNullOrWhiteSpace(x));
+                        <div class="@(string.Join(" ", classes))">
+                            @(await Html.Kentico().WidgetZoneAsync(column.Id.ToString()))
+                        </div>
+                    }
+                    var columnTotal = Model.Properties.Columns.Sum(x => x.Size);
+                    @for (var i = columnTotal; i < 12; i++)
+                    {
+                        <div class="col-1 column-display"><div style="background-color: #e5dedc; border-radius: 10px; height: 100%; "></div></div>
+                    }
+                }
+            </div>
+        </div>
+    </container>
+</container>
 @Html.Raw(Model.Properties.HtmlAfter)

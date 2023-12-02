@@ -9,6 +9,7 @@ namespace StarterSite.Logic
             services.AddSingleton<IWebPageRepository, WebPageRepository>();
             services.AddSingleton<IFaqRepository, FaqRepository>();
             services.AddSingleton<IPageBuilderRepository, PageBuilderRepository>();
+            services.AddSingleton<INavigationRepository, NavigationRepository>();
 
             services.AddSingleton<ICacheScope, CacheScope>();
             services.AddSingleton<ICacheKeyService, CacheKeyService>();

@@ -1,0 +1,33 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@using Kentico.PageBuilder.Web.Mvc
+@using Kentico.Web.Mvc
+@using Xperience.Community.ImageWidget.Components.ImageWidget
+@model ImageWidgetViewModel
+
+@if (Model.ImageSelector != null)
+{
+    @using (Html.Kentico().BeginInlineEditor("ImageWidgetImageSelector", Model.ImageSelector.PropertyName))
+    {
+        <div class="image-widget-image-selector">
+            @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
+            {
+                <img src="@Url.Content(Model.ImageUrl)" width="@Model.Width" height="@Model.Height" alt="@Model.Alt" class="@Model.CssClass" />
+            }
+            else
+            {
+                <div class="image-selector-no-image">
+                    <svg width="100px" height="100px" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" style="display: block;">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5.004 3.003a2 2 0 1 0-.001 4 2 2 0 0 0 0-4Zm-1 2a1 1 0 1 1 2 0 1 1 0 0 1-2 0Z" fill="currentColor"></path>
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M1 2.11V11.887c0 .266.048.585.287.824.24.238.559.287.825.287h9.78c.267 0 .586-.049.825-.287.24-.239.287-.558.287-.824V2.11c0-.266-.048-.585-.287-.824S12.16 1 11.893 1H2.234c-.271 0-.582.05-.835.243-.278.211-.399.526-.399.868ZM11.893 2H2.234a.487.487 0 0 0-.225.036.247.247 0 0 0-.008.075V9.78l2.256-.972a.5.5 0 0 1 .367-.011l1.841.66L8.92 7.006a.5.5 0 0 1 .611-.075l2.474 1.483V2.111a.747.747 0 0 0-.006-.105.753.753 0 0 0-.105-.006Zm.111 7.579L9.351 7.988 7.506 9.83l.663.238a.5.5 0 1 1-.339.941L4.471 9.804l-2.47 1.064v1.018c0 .047.002.081.006.105a.747.747 0 0 0 .105.006h9.78a.75.75 0 0 0 .106-.006.764.764 0 0 0 .006-.105V9.579Z" fill="currentColor"></path>
+                        <path d="M14.5 3.003a.5.5 0 0 1 .5.5v8.553C15 13.717 13.716 15 12.055 15H3.496a.5.5 0 1 1 0-1h8.559C13.164 14 14 13.165 14 12.056V3.503a.5.5 0 0 1 .5-.5Z" fill="currentColor"></path>
+                    </svg>
+                </div>
+            }
+            <div class="image-selector-editor">
+                <button class="image-selector-editor-button">@(string.IsNullOrWhiteSpace(Model.ImageUrl) ? "Select Image" : "Change Image")</button>
+            </div>
+        </div>
+    }
+}
+

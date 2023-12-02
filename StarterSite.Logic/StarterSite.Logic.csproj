@@ -12,11 +12,12 @@
     </ItemGroup>
     
   <ItemGroup>
-    <PackageReference Include="Kentico.Xperience.WebApp" Version="28.0.0" />
+    <PackageReference Include="Kentico.Xperience.WebApp" Version="28.0.1" />
   </ItemGroup>
     
 
   <ItemGroup>
+    <ProjectReference Include="..\HBS.Xperience.Categories\HBS.Xperience.Categories.csproj" />
     <ProjectReference Include="..\StarterSite.Models\StarterSite.Models.csproj" />
     <ProjectReference Include="..\StarterSite.Types\StarterSite.Types.csproj" />
   </ItemGroup>

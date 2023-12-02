@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Xperience.Community.InlineBootstrapSection.Models
+namespace Xperience.Community.BootstrapRowSection.Models
 {
     public class BootstrapColumnModel
     {
@@ -13,5 +13,7 @@ namespace Xperience.Community.InlineBootstrapSection.Models
         public Guid Id { get { if (_id == null) { _id = Guid.NewGuid(); } return _id.Value; } set => _id = value; }
         public int Size { get; set; } = 12;
         public string CustomClass { get; set; } = "";
+        public string GutterY { get; set; } = "";
+        public string GutterX { get; set; } = "";
     }
 }

@@ -26,7 +26,7 @@ namespace StarterSite.RCL
 
             // Paths for my Custom Structure, leveraged with the _CustomViewPath and _CustomController values set in PopulateValues
             // Handles Basic Widgets/Sections/PageTemplates
-            //viewLocationFormats.Add("/{0}.cshtml");
+            viewLocationFormats.Add("/{0}.cshtml");
         }
     }
 }

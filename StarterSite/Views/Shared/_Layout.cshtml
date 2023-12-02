@@ -3,6 +3,9 @@
 *@
 @{
 }
+
+@using Kentico.PageBuilder.Web.Mvc
+@using Kentico.Web.Mvc
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,6 +14,7 @@
     @await RenderSectionAsync("Head", required: false)
     <routed-page>
         <page-builder-styles />
+        <image-widget-styles />
     </routed-page>
 </head>
 <body>
@@ -23,11 +27,7 @@
                 </a>
 
                 <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                    <li><a href="#" class="nav-link px-2 text-secondary">Home</a></li>
-                    <li><a href="#" class="nav-link px-2 text-white">Features</a></li>
-                    <li><a href="#" class="nav-link px-2 text-white">Pricing</a></li>
-                    <li><a href="#" class="nav-link px-2 text-white">FAQs</a></li>
-                    <li><a href="#" class="nav-link px-2 text-white">About</a></li>
+                    <vc:navigation path="/Navigation" channel="layout" />
                 </ul>
 
                 <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">
@@ -50,6 +50,7 @@
     @await RenderSectionAsync("BodyEnd", required: false)
     <routed-page>
         <page-builder-scripts />
+        <image-widget-scripts />
     </routed-page>
 </body>
 </html>

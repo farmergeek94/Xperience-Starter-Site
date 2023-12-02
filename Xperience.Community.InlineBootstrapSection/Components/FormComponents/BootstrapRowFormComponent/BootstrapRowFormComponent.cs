@@ -8,15 +8,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Xperience.Community.InlineBootstrapSection.Models;
+using Xperience.Community.BootstrapRowSection.Models;
 
-namespace Xperience.Community.InlineBootstrapSection.Components.FormComponents.BootstrapRowFormComponent
+namespace Xperience.Community.BootstrapRowSection.Components.FormComponents.BootstrapRowFormComponent
 {
     [ComponentAttribute(typeof(BootstrapRowFormComponentAttribute))]
     public class BootstrapRowFormComponent : FormComponent<BootstrapRowFormComponentProperties, BootstrapRowFormComponentClientProperties, IEnumerable<BootstrapColumnModel>>
     {
-        public const string IDENTIFIER = "Xperience.Community.InlineBootstrapSection.BootstrapRowFormComponent";
-
         public override string ClientComponentName => "@xperience-community/bootstrap-row-section/BootstrapRow";
 
         protected override Task ConfigureClientProperties(BootstrapRowFormComponentClientProperties clientProperties)
