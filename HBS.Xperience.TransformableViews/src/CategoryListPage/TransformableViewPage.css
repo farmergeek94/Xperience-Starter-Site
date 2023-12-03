@@ -22,3 +22,24 @@
     .icon-clickable.delete:hover {
         background-color: red;
     }
+
+.treeview-wrapper {
+    padding: 20px;
+}
+
+.views-wrapper {
+    padding: 20px;
+}
+
+.grid-view-item {
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #eee;
+    color: #333;
+    cursor: pointer;
+    display: flex;
+    flex-direction: row
+}
+.grid-view-item:hover {
+    background-color: lightgray;
+}

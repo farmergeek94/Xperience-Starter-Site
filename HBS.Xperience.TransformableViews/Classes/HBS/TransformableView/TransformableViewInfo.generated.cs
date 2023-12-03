@@ -27,7 +27,7 @@ namespace HBS.TransformableViews
         /// <summary>
         /// Type information.
         /// </summary>
-        public static readonly ObjectTypeInfo TYPEINFO = new ObjectTypeInfo(typeof(TransformableViewInfoProvider), OBJECT_TYPE, "HBS.TransformableView", "TransformableViewID", "TransformableViewLastModified", "TransformableViewGuid", "TransformableViewName", "TransformableViewDisplayName", null, "TransformableViewCategoryID", "hbs.transformableviewcategory")
+        public static readonly ObjectTypeInfo TYPEINFO = new ObjectTypeInfo(typeof(TransformableViewInfoProvider), OBJECT_TYPE, "HBS.TransformableView", "TransformableViewID", "TransformableViewLastModified", "TransformableViewGuid", "TransformableViewName", "TransformableViewDisplayName", null, "TransformableViewTransformableViewCategoryID", "hbs.transformableviewcategory")
         {
             TouchCacheDependencies = true,
             DependsOn = new List<ObjectDependency>()

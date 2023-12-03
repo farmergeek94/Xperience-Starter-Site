@@ -1,12 +1,11 @@
-﻿import CategoryItem from "./CategoryItem";
+﻿import TransformableViewCategoryItem from "./TransformableViewCategoryItem";
 
-export default (categories: CategoryItem[]) => {
+export default (categories: TransformableViewCategoryItem[]) => {
     categories.forEach(f => {
         f.children = categories
-            .filter(g => g.categoryParentID === f.categoryID)
-            .sort((a, b) => (a.categoryOrder ?? 0) - (b.categoryOrder ?? 0))
+            .filter(g => g.transformableViewCategoryParentID === f.transformableViewCategoryID)
+            .sort((a, b) => (a.transformableViewCategoryOrder ?? 0) - (b.transformableViewCategoryOrder ?? 0))
     });
-    var resultList = categories.filter(f => !f.categoryParentID).sort((a, b) => (a.categoryOrder ?? 0) - (b.categoryOrder ?? 0));
-    console.log(resultList);
+    var resultList = categories.filter(f => !f.transformableViewCategoryParentID).sort((a, b) => (a.transformableViewCategoryOrder ?? 0) - (b.transformableViewCategoryOrder ?? 0));
     return resultList;
 }

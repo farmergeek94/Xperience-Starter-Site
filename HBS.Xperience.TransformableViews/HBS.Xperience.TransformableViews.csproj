@@ -1,10 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+    <AdminOrgName>hbs</AdminOrgName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,32 +17,19 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.25" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="src\CategoryListPage\TransformableViewPageTemplate.tsx">
-      <SubType>Code</SubType>
-    </None>
-    <None Update="src\CategoryListPage\Components\CategoryListItem.tsx">
-      <SubType>Code</SubType>
-    </None>
-    <None Update="src\CategoryListPage\Components\CategoryListItemNode.tsx">
-      <SubType>Code</SubType>
-    </None>
-    <None Update="src\CategoryListPage\Components\EditDialog.tsx">
-      <SubType>Code</SubType>
-    </None>
-    <None Update="src\CategoryListPage\Components\Methods.tsx">
-      <SubType>Code</SubType>
-    </None>
-    <None Update="src\entry.tsx">
-      <SubType>Code</SubType>
-    </None>
-    <None Update="src\Shared\CategoryItem.ts">
-      <SubType>Code</SubType>
-    </None>
-    <None Update="src\Shared\HierarchicalCategories.tsx">
-      <SubType>Code</SubType>
-    </None>
-  </ItemGroup>
+
+    <ItemGroup>
+        <AdminClientPath Include="dist\**">
+            <ProjectName>xperience-transformable-view</ProjectName>
+        </AdminClientPath>
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <None Update="src\TransformableViewObjectsFormComponent\Components\ViewsDialog.tsx">
+        <SubType>Code</SubType>
+      </None>
+    </ItemGroup>
 
 
 

@@ -17,8 +17,8 @@
     <ProjectReference Include="..\StarterSite.Models\StarterSite.Models.csproj" />
     <ProjectReference Include="..\StarterSite.RCL\StarterSite.RCL.csproj" />
     <ProjectReference Include="..\StarterSite.Types\StarterSite.Types.csproj" />
+    <ProjectReference Include="..\Xperience.Community.BootstrapRowSection\Xperience.Community.BootstrapRowSection.csproj" />
     <ProjectReference Include="..\Xperience.Community.ImageWidget\Xperience.Community.ImageWidget.csproj" />
-    <ProjectReference Include="..\Xperience.Community.InlineBootstrapSection\Xperience.Community.BootstrapRowSection.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="wwwroot\" />

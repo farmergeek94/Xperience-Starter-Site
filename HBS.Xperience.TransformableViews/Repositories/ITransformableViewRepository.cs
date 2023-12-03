@@ -1,10 +1,14 @@
 ﻿using HBS.TransformableViews;
+using HBS.Xperience.TransformableViews.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace HBS.Xperience.TransformableViews.Repositories
 {
-    internal interface ITransformableViewRepository
+    public interface ITransformableViewRepository
     {
+        Task<IEnumerable<dynamic>> GetObjectItems(TransformableViewObjectsFormComponentModel model);
         ITransformableViewItem? GetTransformableView(string viewName, bool update = false);
         IEnumerable<string> GetTransformableViewNames();
+        Task<IEnumerable<SelectListItem>> GetTransformableViewSelectItems();
     }
 }

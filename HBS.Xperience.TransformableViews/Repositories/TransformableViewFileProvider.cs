@@ -12,11 +12,11 @@ using Xperience.Community.TransformableViews.Models;
 
 namespace HBS.Xperience.TransformableViews.Repositories
 {
-    public class TransformableViewFileProvider : IFileProvider
+    internal class TransformableViewFileProvider : IFileProvider
     {
         public IDirectoryContents GetDirectoryContents(string subpath)
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         public IFileInfo GetFileInfo(string subpath)

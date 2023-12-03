@@ -1,21 +1,30 @@
 ﻿import { usePageCommand } from '@kentico/xperience-admin-base';
-import { Headline, HeadlineSize, Icon,TreeNode, TreeNodeLeadingIcon, TreeNodeTitle, TreeNodeTrailingIcon, TreeView, TreeViewContext} from '@kentico/xperience-admin-components';
-import React, { useContext, useMemo, useReducer } from 'react'
-import './CategoryListPage.css'
-import { CategoryListContext, CategoryListDialogOptions, CategoryListPageTemplateProperties, CategoryListReducer, dialogDefaults } from './Components/Methods';
-import EditDialog from './Components/EditDialog';
-import CategoryListItem from './Components/CategoryListItem';
-import CategoryItem, { ICategoryItem } from '../Shared/CategoryItem';
-import HierarchicalCategories from '../Shared/HierarchicalCategories';
+import { Button, ButtonColor, Cols, Column, Divider, DividerOrientation, Headline, HeadlineSize, Input, Paper, Row } from '@kentico/xperience-admin-components';
+import React, { useEffect, useReducer, useRef } from 'react'
+import './TransformableViewPage.css'
+import { TVCategoryListContext, TVCategoryListPageTemplateProperties, TVCategoryListReducer, dialogDefaults, TVDialogAction } from './Components/Methods';
+import CategoriesDialog from './Components/GeneralDialog';
+import TransformableViewCategoryItem, { ITransformableViewCategoryItem } from '../Shared/TransformableViewCategoryItem';
+import TVTreeView from './Components/TVTreeView';
+import TVList from './Components/TVList';
 
 
-export const CategoryListPageTemplate = ({ categories }: CategoryListPageTemplateProperties) => {
-    const [state, dispatch] = useReducer(CategoryListReducer, {
+export const TransformableViewPageTemplate = ({ categories }: TVCategoryListPageTemplateProperties) => {
+    const [state, dispatch] = useReducer(TVCategoryListReducer, {
         categories,
-        dialogOptions: dialogDefaults
+        dialogOptions: dialogDefaults,
     });
 
-    const { execute: setCategoryCommand } = usePageCommand<ICategoryItem, ICategoryItem | null>("SetCategory", {
+
+    const rowRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (rowRef && rowRef.current) {
+            rowRef.current.style.height = "100%";
+        }
+    }, [rowRef.current])
+
+    const { execute: setCategoryCommand } = usePageCommand<ITransformableViewCategoryItem, ITransformableViewCategoryItem | null>("SetCategory", {
         after: (response) => {
             if (response) {
                 dispatch({ type: "categorySet", data: response });
@@ -23,7 +32,7 @@ export const CategoryListPageTemplate = ({ categories }: CategoryListPageTemplat
         }
     });
 
-    const { execute: setCategoriesCommand } = usePageCommand<ICategoryItem[], ICategoryItem[] | null>("SetCategories", {
+    const { execute: setCategoriesCommand } = usePageCommand<ITransformableViewCategoryItem[], ITransformableViewCategoryItem[] | null>("SetCategories", {
         after: (response) => {
             if (response) {
                 dispatch({ type: "categoriesSet", data: response });
@@ -39,31 +48,27 @@ export const CategoryListPageTemplate = ({ categories }: CategoryListPageTemplat
         }
     });
 
-    const hierarchicalList = useMemo(() => {
-        return HierarchicalCategories(state.categories);
-    }, [state.categories]);
-
-    const setCurrentCategory = (value?: CategoryItem | null) => {
+    const setCurrentCategory = (value?: TransformableViewCategoryItem | null) => {
         dispatch({ type: "categorySelect", data: value });
     }
 
-    const setDialog = (dialogOptions: CategoryListDialogOptions) => {
-        dispatch({ type: "setDialog", data: dialogOptions });
+    const setDialog = (data: TVDialogAction) => {
+        dispatch({ type: "setDialog", data });
     }
 
-    const setCategory = (item: CategoryItem) => {
-        if (!item.categoryID) {
-            var siblings = state.categories.filter(x => x.categoryParentID == item.categoryParentID);
-            var order = Math.max(...categories.map(x => x.categoryOrder ?? 0), 0);
-            item.categoryOrder = order + 1;
+    const setCategory = (item: TransformableViewCategoryItem) => {
+        if (!item.transformableViewCategoryID) {
+            var siblings = state.categories.filter(x => x.transformableViewCategoryParentID == item.transformableViewCategoryParentID);
+            var order = Math.max(...categories.map(x => x.transformableViewCategoryOrder ?? 0), 0);
+            item.transformableViewCategoryOrder = order + 1;
         } else {
             dispatch({ type: "categorySet", data: item })
         }
         setCategoryCommand(item);
     }
 
-    const setCategories = (items: ICategoryItem[]) => {
-        var sortedItems = items.map((x, i) => { x.categoryOrder = i; return x });
+    const setCategories = (items: ITransformableViewCategoryItem[]) => {
+        var sortedItems = items.map((x, i) => { x.transformableViewCategoryOrder = i; return x });
         dispatch({ type: "categoriesSet", data: items })
         setCategoriesCommand(sortedItems);
     }
@@ -72,27 +77,33 @@ export const CategoryListPageTemplate = ({ categories }: CategoryListPageTemplat
         deleteCategoryCommand(id);
     }
 
-    return <div>
-        <Headline size={HeadlineSize.M}>Category List</Headline>
-
-        <CategoryListContext.Provider value={{ setCategory, setCategories, deleteCategory, setCurrentCategory, dialogOptions: state.dialogOptions, setDialog, categories: state.categories }}>
-            <TreeView>        
-                <TreeNode name="" hasChildren={true} nodeIdentifier="" isDraggable={true} dropHandler={() => { }} isToggleable={false} isExpanded={true} renderNode={(x, hovered) => <>
-                    <TreeNodeLeadingIcon isSelected={x} draggable={false}>
-                            <Icon name="xp-parent-child-scheme" />
-                    </TreeNodeLeadingIcon>
-                    <TreeNodeTitle isSelected={x}>Root Category</TreeNodeTitle>
-                    {hovered && <TreeNodeTrailingIcon>
-                        <span className="icon-clickable add" style={{ marginRight: 5}} onClick={(e) => { e.stopPropagation(); setDialog({ ...state.dialogOptions, currentCategory: { categoryDisplayName: "" }, isOpen: true, type: "setCategory", headline: "Add Category", message: "" }) }}>
-                            <Icon name={"xp-plus-circle"} />
-                        </span>
-                    </TreeNodeTrailingIcon>}
-                    </>} level={0}>
-                    {hierarchicalList.map(x => <CategoryListItem key={x.categoryID} category={x} level={1} />)}
-                </TreeNode>
-            </TreeView>
-            <EditDialog />
-        </CategoryListContext.Provider>
+    return <div style={{ display: 'flex', flexDirection: "column", height: "100%" }}>
+        <div style={{ paddingBottom: 20 }}><Headline size={HeadlineSize.M}>Transformable Views</Headline></div>
+        <div style={{ flex: 1 }}>
+            <TVCategoryListContext.Provider value={{ setCategory, setCategories, deleteCategory, setCurrentCategory, dialogOptions: state.dialogOptions, setDialog, categories: state.categories, selectedCategory: state.selectedCategory }}>
+                <Row ref={rowRef}>
+                    <Column cols={Cols.Col3} className="treeview-wrapper">
+                        <Paper fullHeight={true}>
+                            <div style={{ padding: 20 }}>
+                                <div style={{ paddingBottom: 20 }}><Headline size={HeadlineSize.S}>Categories</Headline></div>
+                                <div style={{ paddingBottom: 20 }}><Divider orientation={DividerOrientation.Horizontal} /></div>
+                                <TVTreeView />
+                            </div>
+                        </Paper>
+                    </Column>
+                    <Column cols={Cols.Col9} className="views-wrapper">
+                        <Paper fullHeight={true}>
+                            <div style={{ padding: 20 }}>
+                                <div style={{ paddingBottom: 20 }}><Headline size={HeadlineSize.S}>Views</Headline></div>
+                                <div style={{ paddingBottom: 20 }}><Divider orientation={DividerOrientation.Horizontal} /></div>
+                                {state.selectedCategory && state.selectedCategory.transformableViewCategoryID && <TVList categoryID={state.selectedCategory.transformableViewCategoryID} />}
+                            </div>
+                        </Paper>
+                    </Column>
+                </Row>
+                {state.selectedCategory && <CategoriesDialog />}
+            </TVCategoryListContext.Provider>
+        </div>
     </div>
 }
  

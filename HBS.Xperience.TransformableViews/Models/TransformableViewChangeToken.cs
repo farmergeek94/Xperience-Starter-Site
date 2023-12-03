@@ -1,7 +1,6 @@
 ﻿using CMS.Core;
 using CMS.Helpers;
 using HBS.TransformableViews;
-using HBS.Xperience.TransformableViews.Library;
 using HBS.Xperience.TransformableViews.Repositories;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Primitives;

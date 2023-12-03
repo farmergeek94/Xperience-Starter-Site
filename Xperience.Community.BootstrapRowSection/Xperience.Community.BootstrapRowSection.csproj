@@ -18,7 +18,8 @@
 
 <ItemGroup>
   <AdminClientPath Include="dist\**">
-    <ProjectName>inline-bootstrap-section</ProjectName>
+    <ProjectName>bootstrap-row-section</ProjectName>
   </AdminClientPath>
 </ItemGroup>
+    
 </Project>

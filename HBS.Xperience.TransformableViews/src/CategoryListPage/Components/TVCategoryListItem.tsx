@@ -1,11 +1,11 @@
 ﻿import React, { useContext, useEffect, useState } from 'react'
-import { CategoryListContext } from './Methods';
+import { TVCategoryListContext } from './Methods';
 import { DropPlacement, Icon, TreeNode, TreeNodeLeadingIcon, TreeNodeTitle } from '@kentico/xperience-admin-components';
-import CategoryListItemNode from './CategoryListItemNode';
-import CategoryItem, { ICategoryItem } from '../../Shared/TranformableViewCategoryItem';
+import CategoryListItemNode from './TVCategoryListItemNode';
+import TransformableViewCategoryItem, { ITransformableViewCategoryItem } from '../../Shared/TransformableViewCategoryItem';
 
-const CategoryListItem =  ({ category, level }: { category: CategoryItem, level: number }) => {
-    const { dialogOptions, setDialog, setCategories, categories, setCategory } = useContext(CategoryListContext);
+const CategoryListItem =  ({ category, level }: { category: TransformableViewCategoryItem, level: number }) => {
+    const { dialogOptions, setDialog, setCategories, categories, setCategory, setCurrentCategory } = useContext(TVCategoryListContext);
 
     const [expanded, setExpended] = useState((category.children?.length ?? 0) > 0);
 
@@ -15,35 +15,35 @@ const CategoryListItem =  ({ category, level }: { category: CategoryItem, level:
 
     const handleDragDrop = (draggedItemID: string, targetItemID: string, dropPlacement: DropPlacement) => {
         // Get Dragged Item
-        var category = categories.find(x => ('' + x.categoryID) == draggedItemID);
+        var category = categories.find(x => ('' + x.transformableViewCategoryID) == draggedItemID);
 
         // Get target item
-        var targetCategory = categories.find(x => ('' + x.categoryID) == targetItemID);
+        var targetCategory = categories.find(x => ('' + x.transformableViewCategoryID) == targetItemID);
 
         // Check if going to be a child of target currently not working, but will once fixed
         if (dropPlacement == DropPlacement.Child) {
             if (category && targetCategory) {
-                category.categoryParentID = targetCategory.categoryID;
+                category.transformableViewCategoryParentID = targetCategory.transformableViewCategoryID;
                 setCategory(category);
             }
         }
         // Otherwise reorder accordingly.
         else if (targetCategory)
         {
-            var target = targetCategory as ICategoryItem;
+            var target = targetCategory as ITransformableViewCategoryItem;
 
             var siblings = categories
-                .filter(x => x.categoryParentID == target.categoryParentID && x.categoryID != category?.categoryID)
-                .sort(((a, b) => (a.categoryOrder ?? 0) - (b.categoryOrder ?? 0)));
+                .filter(x => x.transformableViewCategoryParentID == target.transformableViewCategoryParentID && x.transformableViewCategoryID != category?.transformableViewCategoryID)
+                .sort(((a, b) => (a.transformableViewCategoryOrder ?? 0) - (b.transformableViewCategoryOrder ?? 0)));
 
-            var index = siblings.findIndex(x => x.categoryID == target.categoryID);
+            var index = siblings.findIndex(x => x.transformableViewCategoryID == target.transformableViewCategoryID);
 
             if (dropPlacement == DropPlacement.Below) {
                 index++;
             }
 
             if (category && targetCategory) {
-                category.categoryParentID = targetCategory.categoryParentID;
+                category.transformableViewCategoryParentID = targetCategory.transformableViewCategoryParentID;
                 var newCategories = [
                     ...siblings.slice(0, index)
                     , category
@@ -56,17 +56,18 @@ const CategoryListItem =  ({ category, level }: { category: CategoryItem, level:
     }
 
     return <TreeNode
-        name={category.categoryName ?? ""}
+        name={category.transformableViewCategoryName ?? ""}
         hasChildren={(category.children?.length ?? 0) > 0}
         dropHandler={handleDragDrop}
-        nodeIdentifier={category.categoryID?.toString() ?? ""}
+        nodeIdentifier={category.transformableViewCategoryID?.toString() ?? ""}
         isDraggable={true}
         isToggleable={(category.children?.length ?? 0) > 0}
         onNodeToggle={(e) => setExpended(e)}
         isExpanded={expanded}
+        onNodeClick={() => { setCurrentCategory(category) } }
         renderNode={(selected, hovered, dragSource) => dragSource && dragSource(<div><CategoryListItemNode selected={selected} category={category} hovered={hovered} /></div>, {})}
         level={level}>
-        {category.children && category.children.map(x => <CategoryListItem key={x.categoryID} category={x} level={level + 1} />)}
+        {category.children && category.children.map(x => <CategoryListItem key={x.transformableViewCategoryID} category={x} level={level + 1} />)}
     </TreeNode>
 }
 

@@ -1,65 +1,72 @@
 ﻿import { createContext } from "react";
-import CategoryItem, { ICategoryItem } from "../../Shared/CategoryItem";
+import TransformableViewCategoryItem, { ITransformableViewCategoryItem } from "../../Shared/TransformableViewCategoryItem";
 
-export interface CategoryListPageTemplateProperties {
-    categories: CategoryItem[];
+export interface TVCategoryListPageTemplateProperties {
+    categories: TransformableViewCategoryItem[];
 }
 
-export interface CategoryListDialogOptions {
-    currentCategory?: CategoryItem | null
+export interface TVCategoryListDialogOptions {
     isOpen: boolean
     headline: string
     message: string
     type?: "setCategory" | "deleteCategory"
 }
 
-export interface CategoryListPageState extends CategoryListPageTemplateProperties {
-    dialogOptions: CategoryListDialogOptions
+export interface TVCategoryListPageState extends TVCategoryListPageTemplateProperties {
+    dialogOptions: TVCategoryListDialogOptions,
+    selectedCategory?: TransformableViewCategoryItem | null
 }
 
-export interface ICategoryListContext {
-    setCategory: (value: CategoryItem) => void
-    setCategories: (value: CategoryItem[]) => void
+export interface ITVCategoryListContext {
+    setCategory: (value: TransformableViewCategoryItem) => void
+    setCategories: (value: TransformableViewCategoryItem[]) => void
     deleteCategory: (value: number) => void
-    setCurrentCategory: (value?: CategoryItem | null) => void
-    setDialog: (x: CategoryListDialogOptions) => void
-    dialogOptions: CategoryListDialogOptions
-    categories: CategoryItem[]
+    setCurrentCategory: (value?: TransformableViewCategoryItem | null) => void
+    setDialog: (x: TVDialogAction) => void
+    dialogOptions: TVCategoryListDialogOptions
+    categories: TransformableViewCategoryItem[],
+    selectedCategory?: TransformableViewCategoryItem | null
 }
 
-export type CategoryActions = { type: "categorySet", data: ICategoryItem }
-    | { type: "categoriesSet", data: ICategoryItem[] }
-    | { type: "categorySelect", data?: ICategoryItem | null }
-    | { type: "categoryDelete", data: number }
-    | { type: "setDialog", data: CategoryListDialogOptions }
+export interface TVDialogAction {
+    dialogOptions: TVCategoryListDialogOptions,
+    selectCategory?: TransformableViewCategoryItem | null
+}
 
-export const CategoryListReducer = (state: CategoryListPageState, action: CategoryActions) => {
+export type TVCategoryActions = { type: "categorySet", data: ITransformableViewCategoryItem }
+    | { type: "categoriesSet", data: ITransformableViewCategoryItem[] }
+    | { type: "categorySelect", data?: ITransformableViewCategoryItem | null }
+    | { type: "categoryDelete", data: number }
+    | { type: "setDialog", data: TVDialogAction }
+
+export const TVCategoryListReducer = (state: TVCategoryListPageState, action: TVCategoryActions) => {
     const { type, data } = action;
     const newState = { ...state };
     switch (type) {
         case "categorySet":
             newState.categories = [...newState.categories];
-            const objIndex = newState.categories.findIndex((obj => obj.categoryID == data.categoryID));
+            const objIndex = newState.categories.findIndex((obj => obj.transformableViewCategoryID == data.transformableViewCategoryID));
             if (objIndex > -1) {
                 newState.categories[objIndex] = data;
             } else {
                 newState.categories.push(data);
             }
-            newState.dialogOptions.currentCategory = null;
+            newState.selectedCategory = null;
             break;
         case "categorySelect":
-            newState.dialogOptions.currentCategory = data;
+            newState.selectedCategory = data;
             break;
         case "categoryDelete":
-            newState.categories = newState.categories.filter(x => x.categoryID != data);
+            newState.categories = newState.categories.filter(x => x.transformableViewCategoryID != data);
             break;
         case "setDialog":
-            newState.dialogOptions = data;
+            newState.dialogOptions = data.dialogOptions;
+            newState.selectedCategory = data.selectCategory;
             break;
         case "categoriesSet":
             newState.categories = [...newState.categories];
             for (const cat of data) {
-                const objIndex = newState.categories.findIndex((obj => obj.categoryID == cat.categoryID));
+                const objIndex = newState.categories.findIndex((obj => obj.transformableViewCategoryID == cat.transformableViewCategoryID));
                 if (objIndex > -1) {
                     newState.categories[objIndex] = cat;
                 } else {
@@ -77,12 +84,12 @@ export const dialogDefaults = {
     message: ""
 };
 
-export const CategoryListContext = createContext<ICategoryListContext>({
-    setCurrentCategory: (x?: ICategoryItem | null) => { },
-    setCategory: (x: ICategoryItem) => { },
-    setCategories: (x: ICategoryItem[]) => { },
+export const TVCategoryListContext = createContext<ITVCategoryListContext>({
+    setCurrentCategory: (x?: ITransformableViewCategoryItem | null) => { },
+    setCategory: (x: ITransformableViewCategoryItem) => { },
+    setCategories: (x: ITransformableViewCategoryItem[]) => { },
     deleteCategory: (x: number) => { },
-    setDialog: (x: CategoryListDialogOptions) => { },
+    setDialog: (x: TVDialogAction) => { },
     dialogOptions: dialogDefaults,
     categories: []
 });

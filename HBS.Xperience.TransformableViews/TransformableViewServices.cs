@@ -1,4 +1,5 @@
-﻿using HBS.Xperience.TransformableViews.Repositories;
+﻿using HBS.Xperience.TransformableViews.Library;
+using HBS.Xperience.TransformableViews.Repositories;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,19 +11,14 @@ using System.Threading.Tasks;
 
 namespace HBS.Xperience.TransformableViews
 {
-    public class TransformableViewServices
+    public static class TransformableViewServices
     {
-        public IServiceCollection AddTransformableView(IServiceCollection services)
+        public static IMvcBuilder AddTransformableViewsProvider(this IMvcBuilder builder)
         {
-            services.AddSingleton<ITransformableViewRepository, TransformableViewRepository>();
+            builder.Services.AddSingleton<ITransformableViewRepository, TransformableViewRepository>();
 
-            // Add the file provider
-            services.Configure<MvcRazorRuntimeCompilationOptions>(opts =>
-                opts.FileProviders.Add(
-                    new TransformableViewFileProvider()
-                )
-            );
-            return services;
+            builder.AddRazorRuntimeCompilation(cs => cs.FileProviders.Add(new TransformableViewFileProvider()));
+            return builder;
         }
     }
 }

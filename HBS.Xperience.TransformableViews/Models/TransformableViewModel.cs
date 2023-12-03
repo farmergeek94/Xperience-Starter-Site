@@ -8,9 +8,9 @@ namespace HBS.Xperience.TransformableViews.Models
 {
     public class TransformableViewModel
     {
-        public string ContainerTitle { get; set; } = "";
-        public string ContainerCSS { get; set; } = "";
-        public string ContainerCustomContent { get; set; } = "";
+        public string ViewTitle { get; set; } = "";
+        public string ViewClassNames { get; set; } = "";
+        public string ViewCustomContent { get; set; } = "";
         public IEnumerable<dynamic> Items { get; set; } = Enumerable.Empty<dynamic>();
     }
 }

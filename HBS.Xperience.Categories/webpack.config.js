@@ -36,7 +36,7 @@ module.exports = (opts, argv) => {
         },
         // Webpack server configuration. Required when running the boilerplate in 'Proxy' mode.
         devServer: {
-            port: 3010,
+            port: 3009,
         },
     };
 

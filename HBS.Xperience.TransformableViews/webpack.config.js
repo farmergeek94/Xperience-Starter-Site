@@ -10,7 +10,7 @@ module.exports = (opts, argv) => {
             // Sets the organizationName and projectName
             // The JS module is registered on the backend using these values
             orgName: "hbs",
-            projectName: "xperience-transformable-view",
+            projectName: "xperience-transformable-views",
             webpackConfigEnv: webpackConfigEnv,
             argv: argv
         });
@@ -36,7 +36,7 @@ module.exports = (opts, argv) => {
         },
         // Webpack server configuration. Required when running the boilerplate in 'Proxy' mode.
         devServer: {
-            port: 3010,
+            port: 3009,
         },
     };
 

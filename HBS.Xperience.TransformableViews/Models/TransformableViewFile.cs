@@ -1,7 +1,6 @@
 ﻿using CMS.Core;
 using CMS.Helpers;
 using HBS.TransformableViews;
-using HBS.Xperience.TransformableViews.Library;
 using HBS.Xperience.TransformableViews.Repositories;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.FileProviders;
@@ -55,21 +54,30 @@ namespace Xperience.Community.TransformableViews.Models
             return new MemoryStream(_viewContent);
         }
 
-        private void GetView(string viewName)
+        private void GetView(string viewPath)
         {
-            
-            try
+            var usings = @"@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using Kentico.PageBuilder.Web.Mvc
+@using Kentico.Web.Mvc
+";
+            if (viewPath.IndexOf("Components/TransformableViewObjectsWidget") > -1)
             {
-                var view = _repository.GetTransformableView(viewName, true);
-                if (view != null) {
-                    _viewContent = Encoding.UTF8.GetBytes(view.TransformableViewContent);
-                    _lastModified = view.TransformableViewLastModified;
-                    _exists = true;
+                var viewName = Path.GetFileName(viewPath).Replace(".cshtml","");
+
+                try
+                {
+                    var view = _repository.GetTransformableView(viewName, true);
+                    if (view != null)
+                    {
+                        _viewContent = Encoding.UTF8.GetBytes(usings + view.TransformableViewContent);
+                        _lastModified = view.TransformableViewLastModified;
+                        _exists = true;
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                // if something went wrong, Exists will be false
+                catch (Exception ex)
+                {
+                    // if something went wrong, Exists will be false
+                }
             }
         }
     }

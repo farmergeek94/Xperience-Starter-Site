@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HBS.Xperience.TransformableViews.Models
 {
-    public class TransformableViewFormComponentModel
+    public class TransformableViewObjectsFormComponentModel
     {
         public string ClassName { get; set; } = string.Empty;
         public string Columns { get; set; } = string.Empty;
