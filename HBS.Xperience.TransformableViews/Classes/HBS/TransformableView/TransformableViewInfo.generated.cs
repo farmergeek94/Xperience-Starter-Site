@@ -114,17 +114,6 @@ namespace HBS.TransformableViews
 
 
         /// <summary>
-        /// Transformable view last requested.
-        /// </summary>
-        [DatabaseField]
-        public virtual DateTime TransformableViewLastRequested
-        {
-            get => ValidationHelper.GetDateTime(GetValue(nameof(TransformableViewLastRequested)), DateTimeHelper.ZERO_TIME);
-            set => SetValue(nameof(TransformableViewLastRequested), value, DateTimeHelper.ZERO_TIME);
-        }
-
-
-        /// <summary>
         /// Deletes the object using appropriate provider.
         /// </summary>
         protected override void DeleteObject()

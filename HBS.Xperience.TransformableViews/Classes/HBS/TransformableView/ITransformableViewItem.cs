@@ -7,7 +7,6 @@
         Guid TransformableViewGuid { get; set; }
         int TransformableViewID { get; set; }
         DateTime TransformableViewLastModified { get; set; }
-        DateTime TransformableViewLastRequested { get; set; }
         string TransformableViewName { get; set; }
         int TransformableViewTransformableViewCategoryID { get; set; }
     }
