@@ -3,6 +3,7 @@ import React, { createContext, useContext, useEffect, useMemo, useReducer, useSt
 import CategoryItem from '../Shared/CategoryItem';
 import { Button, ButtonColor, ButtonSize, Dialog, FormItemWrapper, Icon, Input, TreeNode, TreeNodeLeadingIcon, TreeNodeTitle, TreeNodeTrailingIcon, TreeView } from '@kentico/xperience-admin-components';
 import HierarchicalCategories from '../Shared/HierarchicalCategories';
+import './CategoryListFormComponent.css'
 
 interface CategoyListFormComponentState {
     dialogOptions: CategoryListFormComponentDialogOptions
@@ -140,6 +141,7 @@ export const CategoryListFormComponent = (props: FormComponentProps) => {
             confirmAction={{ label: "Done", onClick: handleSave }}
             cancelAction={{ label: "Cancel", onClick: handleClose }}
             onClose={handleClose}
+            overlayClassName="dialog-z-index"
         >
             <CategoyListFormComponentContext.Provider value={{categories: state.categories, selectedCategories: state.dialogOptions.selectedCategories, addCategory, removeCategory}}>
                 <TreeView>

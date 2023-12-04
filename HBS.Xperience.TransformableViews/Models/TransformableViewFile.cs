@@ -18,7 +18,6 @@ namespace Xperience.Community.TransformableViews.Models
 
         private ITransformableViewRepository _repository => Service.Resolve<ITransformableViewRepository>();
 
-        private IProgressiveCache _progressiveCache => Service.Resolve<IProgressiveCache>();
         private byte[] _viewContent = Array.Empty<byte>();
         private DateTimeOffset _lastModified = DateTime.MinValue;
         private bool _exists = false;
@@ -60,7 +59,7 @@ namespace Xperience.Community.TransformableViews.Models
 @using Kentico.PageBuilder.Web.Mvc
 @using Kentico.Web.Mvc
 ";
-            if (viewPath.IndexOf("Components/TransformableViewObjectsWidget") > -1)
+            if (viewPath.IndexOf("TransformableView") > -1)
             {
                 var viewName = Path.GetFileName(viewPath).Replace(".cshtml","");
 

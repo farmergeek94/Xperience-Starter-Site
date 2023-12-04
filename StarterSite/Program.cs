@@ -50,7 +50,7 @@ builder.Services.AddScoped<ILayoutContext, LayoutContext>();
 builder.Services.AddAuthentication();
 // builder.Services.AddAuthorization();
 
-builder.Services.AddControllersWithViews().AddTransformableViewsProvider();
+builder.Services.AddControllersWithViews().AddTransformableViewsProvider("QPiJvpcmTu6aUAMR7pgaNFI1DKHnWobx");
 
 builder.Services.AddBootstrapRowSection(x => x.SetupBackgroundItems(new string[] {
     "bg-primary"

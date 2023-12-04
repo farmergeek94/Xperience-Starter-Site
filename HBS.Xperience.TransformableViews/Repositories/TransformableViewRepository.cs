@@ -2,8 +2,8 @@
 using CMS.DataEngine;
 using CMS.Helpers;
 using HBS.TransformableViews;
-using HBS.Xperience.TransformableViews.Library;
 using HBS.Xperience.TransformableViews.Models;
+using HBS.Xperience.TransformableViews.Services;
 using Kentico.Xperience.Admin.Base;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
@@ -22,12 +22,17 @@ namespace HBS.Xperience.TransformableViews.Repositories
     {
         private readonly IProgressiveCache _progressiveCache;
         private readonly ITransformableViewInfoProvider _transformableViewInfoProvider;
+        private readonly IEncryptionService _encryptionService;
 
-        public TransformableViewRepository(IProgressiveCache progressiveCache, ITransformableViewInfoProvider transformableViewInfoProvider)
+        public TransformableViewRepository(IProgressiveCache progressiveCache, ITransformableViewInfoProvider transformableViewInfoProvider, IEncryptionService encryptionService)
         {
             _progressiveCache = progressiveCache;
             _transformableViewInfoProvider = transformableViewInfoProvider;
+            _encryptionService = encryptionService;
         }
+
+        public Dictionary<string, DateTime> LastViewedDates { get; set; } = new Dictionary<string, DateTime>();
+
         public ITransformableViewItem? GetTransformableView(string viewName, bool update = false)
         {
             var view = _progressiveCache.Load(cs =>
@@ -38,21 +43,14 @@ namespace HBS.Xperience.TransformableViews.Repositories
                             $"{TransformableViewInfo.OBJECT_TYPE}|all"
                         });
                 }
-                return _transformableViewInfoProvider.Get()
-                .Where(w => w.WhereEquals(nameof(TransformableViewInfo.TransformableViewName), viewName)).FirstOrDefault()?.DecryptContent();
+                var view = _transformableViewInfoProvider.Get()
+                .Where(w => w.WhereEquals(nameof(TransformableViewInfo.TransformableViewName), viewName)).FirstOrDefault();
+                return view == null? null : _encryptionService.DecryptView(view);
             }, new CacheSettings(86400, "GetTransformableViewInfo", viewName));
 
             if (view != null && update)
             {
-                // Run direct in order to no trigger cache dependancy.
-                ConnectionHelper.ExecuteNonQuery($@"
-                    update {TransformableViewInfo.TYPEINFO.ClassStructureInfo.TableName} 
-                    set {nameof(TransformableViewInfo.TransformableViewLastRequested)} = GETDATE() 
-                    where {nameof(TransformableViewInfo.TransformableViewName)} = @ViewName
-                ", new QueryDataParameters
-                {
-                    new DataParameter("@ViewName", viewName)
-                }, QueryTypeEnum.SQLQuery);
+                LastViewedDates[viewName] = DateTime.Now;
             }
 
             return view;

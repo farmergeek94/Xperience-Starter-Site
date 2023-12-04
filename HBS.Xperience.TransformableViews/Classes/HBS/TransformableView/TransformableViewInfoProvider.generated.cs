@@ -1,5 +1,6 @@
+using CMS.Core;
 using CMS.DataEngine;
-using HBS.Xperience.TransformableViews.Library;
+using HBS.Xperience.TransformableViews.Services;
 
 namespace HBS.TransformableViews
 {
@@ -19,7 +20,8 @@ namespace HBS.TransformableViews
 
         public override void Set(TransformableViewInfo info)
         {
-            base.Set(info.EncryptContent());
+            var service = Service.Resolve<IEncryptionService>();
+            base.Set(service.EncryptView(info));
         }
     }
 }

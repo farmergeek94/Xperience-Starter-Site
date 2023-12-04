@@ -14,13 +14,13 @@ namespace HBS.Xperience.TransformableViews.Models
 {
     internal class TransformableViewChangeToken : IChangeToken
     {
-        private readonly string _viewName;
+        private readonly string _filter;
 
         private ITransformableViewRepository _repository => Service.Resolve<ITransformableViewRepository>();
 
-        public TransformableViewChangeToken(string viewName)
+        public TransformableViewChangeToken(string filter)
         {
-            _viewName = viewName;
+            _filter = filter;
         }
 
         public bool ActiveChangeCallbacks => false;
@@ -31,19 +31,20 @@ namespace HBS.Xperience.TransformableViews.Models
             {
                 try
                 {
-                    var names = _repository.GetTransformableViewNames();
-                    if(!names.Any(x=>x == _viewName))
+                    if (_filter.IndexOf("TransformableView") > -1)
                     {
-                        return false;
-                    }
-                    var view = _repository.GetTransformableView(_viewName);
-                    if(view != null)
-                    {
-                        if(view.TransformableViewLastRequested == DateTimeHelper.ZERO_TIME)
+                        var viewName = Path.GetFileName(_filter).Replace(".cshtml", "");
+                        var view = _repository.GetTransformableView(viewName);
+                        if (view != null)
                         {
-                            return false;
+                            var wasRequested = _repository.LastViewedDates.ContainsKey(viewName);
+
+                            if (!wasRequested)
+                            {
+                                return false;
+                            }
+                            return view.TransformableViewLastModified > _repository.LastViewedDates[viewName];
                         }
-                        return view.TransformableViewLastModified > view.TransformableViewLastRequested;
                     }
                     return false;
                 }

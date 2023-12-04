@@ -20,17 +20,13 @@
 
     <ItemGroup>
         <AdminClientPath Include="dist\**">
-            <ProjectName>xperience-transformable-view</ProjectName>
+            <ProjectName>xperience-transformable-views</ProjectName>
         </AdminClientPath>
     </ItemGroup>
 
 
     <ItemGroup>
-      <None Update="src\TransformableViewObjectsFormComponent\Components\ViewsDialog.tsx">
-        <SubType>Code</SubType>
-      </None>
+      <Folder Include="dist\" />
     </ItemGroup>
-
-
 
 </Project>

@@ -1,6 +1,6 @@
 ﻿(function () {
     // Registers the 'custom-editor' inline property editor
-    window.kentico.pageBuilder.registerInlineEditor("image-widget-image-selector", {
+    window.kentico.pageBuilder.registerInlineEditor("ImageWidgetImageSelector", {
         init: function (options) {
             var editor = options.editor;
             

@@ -36,7 +36,7 @@ namespace Xperience.Community.ImageWidget.TagHelpers
                 var urlHelper = _urlHelperFactory.GetUrlHelper(_actionContextAccessor.ActionContext);
                 output.TagMode = TagMode.SelfClosing;
                 output.TagName = null;
-                output.PostElement.AppendHtml(@$"<script src='{urlHelper.Content("~/_content/Xperience.Community.ImageWidget/PageBuilder/Admin/InlineEditors/Shared/ImageSelector.js")}' defer />");
+                output.PostElement.AppendHtml(@$"<script src='{urlHelper.Content("~/_content/Xperience.Community.ImageWidget/PageBuilder/Admin/InlineEditors/Shared/ImageSelector.js")}' />");
             }
             else
             {

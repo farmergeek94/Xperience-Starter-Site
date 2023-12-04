@@ -1,7 +1,7 @@
 ﻿using CMS.Helpers;
 using HBS.TransformableViews;
 using HBS.Xperience.Categories.Admin.UIPages;
-using HBS.Xperience.TransformableViews.Library;
+using HBS.Xperience.TransformableViews.Services;
 using Kentico.Xperience.Admin.Base;
 using System;
 using System.Collections.Generic;
@@ -18,11 +18,13 @@ namespace HBS.Xperience.Categories.Admin.UIPages
 
         private readonly ITransformableViewCategoryInfoProvider _transformableViewCategoryInfoProvider;
         private readonly ITransformableViewInfoProvider _transformableViewInfoProvider;
+        private readonly IEncryptionService _encryptionService;
 
-        public TransformableViewPage(ITransformableViewCategoryInfoProvider categoryInfoProvider, ITransformableViewInfoProvider transformableViewInfoProvider)
+        public TransformableViewPage(ITransformableViewCategoryInfoProvider categoryInfoProvider, ITransformableViewInfoProvider transformableViewInfoProvider, IEncryptionService encryptionService)
         {
             _transformableViewCategoryInfoProvider = categoryInfoProvider;
             _transformableViewInfoProvider = transformableViewInfoProvider;
+            _encryptionService = encryptionService;
         }
 
         public override async Task<TransformableViewPageClientProperties> ConfigureTemplateProperties(TransformableViewPageClientProperties properties)
@@ -100,7 +102,7 @@ namespace HBS.Xperience.Categories.Admin.UIPages
             IEnumerable<ITransformableViewItem> views = await _transformableViewInfoProvider.Get().Where(x => x.WhereEquals(nameof(ITransformableViewItem.TransformableViewTransformableViewCategoryID), categoryID)).GetEnumerableTypedResultAsync();
             foreach(var view in views)
             {
-                view.TransformableViewContent = EncryptionService.DecryptString(view.TransformableViewContent);
+                view.TransformableViewContent = _encryptionService.DecryptString(view.TransformableViewContent);
             }
             return ResponseFrom(views);
         }
