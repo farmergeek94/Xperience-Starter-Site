@@ -12,34 +12,35 @@ using System.Threading.Tasks;
 
 [assembly: RegisterWidget(
     identifier: "HBS.TransformableViewObjects",
-    viewComponentType: typeof(TransformableViewObjectsWidget),
+    customViewName: "~/Components/_TransformableViewObjects.cshtml",
     name: "Transformable View Objects",
-    propertiesType: typeof(TransformableViewObjectsWidgetProperties))]
+    propertiesType: typeof(TransformableViewObjectsWidgetProperties),
+    IconClass = "icon-layout")]
 
 namespace HBS.Xperience.TransformableViews.Components
 {
-    public class TransformableViewObjectsWidget : ViewComponent
+    public class TransformableViewObjectsWidgetViewComponent : ViewComponent
     {
         private readonly ITransformableViewRepository _transformableViewRepository;
 
-        public TransformableViewObjectsWidget(ITransformableViewRepository transformableViewRepository)
+        public TransformableViewObjectsWidgetViewComponent(ITransformableViewRepository transformableViewRepository)
         {
             _transformableViewRepository = transformableViewRepository;
         }
-        public async Task<IViewComponentResult> InvokeAsync(ComponentViewModel<TransformableViewObjectsWidgetProperties> widgetModel)
+        public async Task<IViewComponentResult> InvokeAsync(TransformableViewObjectsFormComponentModel model)
         {
-            if (!string.IsNullOrWhiteSpace(widgetModel.Properties.Model.ClassName))
+            if (!string.IsNullOrWhiteSpace(model.ClassName))
             {
-                var items = await _transformableViewRepository.GetObjectItems(widgetModel.Properties.Model);
+                var items = await _transformableViewRepository.GetObjectItems(model);
 
-                var model = new TransformableViewModel()
+                var viewModel = new TransformableViewModel()
                 {
-                    ViewTitle = widgetModel.Properties.Model.ViewTitle,
-                    ViewClassNames = widgetModel.Properties.Model.ViewClassNames,
-                    ViewCustomContent = widgetModel.Properties.Model.ViewCustomContent,
+                    ViewTitle = model.ViewTitle,
+                    ViewClassNames = model.ViewClassNames,
+                    ViewCustomContent = model.ViewCustomContent,
                     Items = items
                 };
-                return View(widgetModel.Properties.Model.View, model);
+                return View(model.View, viewModel);
                 //return Content(string.Empty);
             }
             return Content(string.Empty);
