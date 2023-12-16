@@ -43,9 +43,11 @@ namespace HBS.Xperience.TransformableViews.Repositories
                             $"{TransformableViewInfo.OBJECT_TYPE}|all"
                         });
                 }
+                // use our own scope.
+                using var connection = new CMSConnectionScope();
                 var view = _transformableViewInfoProvider.Get()
                 .Where(w => w.WhereEquals(nameof(TransformableViewInfo.TransformableViewName), viewName)).FirstOrDefault();
-                return view == null? null : _encryptionService.DecryptView(view);
+                return view == null ? null : _encryptionService.DecryptView(view);
             }, new CacheSettings(86400, "GetTransformableViewInfo", viewName));
 
             if (view != null && update)
@@ -54,11 +56,6 @@ namespace HBS.Xperience.TransformableViews.Repositories
             }
 
             return view;
-        }
-
-        public IEnumerable<string> GetTransformableViewNames()
-        {
-            return TransformableViewNames().Result.Select(x => x.TransformableViewName);
         }
 
         public async Task<IEnumerable<SelectListItem>> GetTransformableViewSelectItems()
