@@ -16,6 +16,7 @@ using System.Linq;
 using X;
 using Xperience.Community.BootstrapRowSection;
 using Xperience.Community.ImageWidget;
+using HBS.Xperience.TransformableViewsShared;
 using HBS.Xperience.TransformableViews;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -50,7 +51,7 @@ builder.Services.AddScoped<ILayoutContext, LayoutContext>();
 builder.Services.AddAuthentication();
 // builder.Services.AddAuthorization();
 
-builder.Services.AddControllersWithViews().AddTransformableViewsProvider("QPiJvpcmTu6aUAMR7pgaNFI1DKHnWobx");
+builder.Services.AddControllersWithViews().WithTransformableViewsProvider().WithTransformableViews("QPiJvpcmTu6aUAMR7pgaNFI1DKHnWobx");
 
 builder.Services.AddBootstrapRowSection(x => x.SetupBackgroundItems(new string[] {
     "bg-primary"

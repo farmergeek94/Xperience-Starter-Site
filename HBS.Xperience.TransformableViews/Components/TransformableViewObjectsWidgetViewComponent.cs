@@ -1,17 +1,18 @@
-﻿using HBS.Xperience.TransformableViews.Admin.FormComponents.TranformableViewFormComponent;
-using HBS.Xperience.TransformableViews.Components;
-using HBS.Xperience.TransformableViews.Models;
-using HBS.Xperience.TransformableViews.Repositories;
+﻿using HBS.Xperience.TransformableViews.Components;
+using HBS.Xperience.TransformableViewsShared.Library;
+using HBS.Xperience.TransformableViewsShared.Models;
+using HBS.Xperience.TransformableViewsShared.Repositories;
 using Kentico.PageBuilder.Web.Mvc;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 [assembly: RegisterWidget(
-    identifier: "HBS.TransformableViewObjects",
+    identifier: TransformableViewObjectsWidgetViewComponent.Identifier,
     customViewName: "~/Components/_TransformableViewObjects.cshtml",
     name: "Transformable View Objects",
     propertiesType: typeof(TransformableViewObjectsWidgetProperties),
@@ -21,6 +22,7 @@ namespace HBS.Xperience.TransformableViews.Components
 {
     public class TransformableViewObjectsWidgetViewComponent : ViewComponent
     {
+        public const string Identifier = "HBS.TransformableViewObjects";
         private readonly ITransformableViewRepository _transformableViewRepository;
 
         public TransformableViewObjectsWidgetViewComponent(ITransformableViewRepository transformableViewRepository)

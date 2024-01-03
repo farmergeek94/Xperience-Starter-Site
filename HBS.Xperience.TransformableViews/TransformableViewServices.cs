@@ -1,16 +1,13 @@
 ﻿using HBS.Xperience.TransformableViews.Repositories;
-using HBS.Xperience.TransformableViews.Services;
+using HBS.Xperience.TransformableViewsShared.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HBS.Xperience.TransformableViews
 {
     public static class TransformableViewServices
     {
-        public static IMvcBuilder AddTransformableViewsProvider(this IMvcBuilder builder, string aesKey)
+        public static IMvcBuilder WithTransformableViewsProvider(this IMvcBuilder builder)
         {
-            builder.Services.AddSingleton<ITransformableViewRepository, TransformableViewRepository>();
-            builder.Services.AddSingleton<IEncryptionService>(new EncryptionService(aesKey));
-
             builder.AddRazorRuntimeCompilation(cs => cs.FileProviders.Add(new TransformableViewFileProvider()));
             return builder;
         }

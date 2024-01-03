@@ -1,6 +1,7 @@
 ﻿using CMS.Helpers;
 using HBS.TransformableViews;
 using HBS.Xperience.TransformableViews.Models;
+using HBS.Xperience.TransformableViewsShared.Models;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Primitives;
 using System;

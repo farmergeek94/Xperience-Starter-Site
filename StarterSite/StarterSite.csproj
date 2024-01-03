@@ -11,6 +11,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\HBS.Xperience.Categories\HBS.Xperience.Categories.csproj" />
+    <ProjectReference Include="..\HBS.Xperience.TransformableViewsAdmin\HBS.Xperience.TransformableViewsAdmin.csproj" />
     <ProjectReference Include="..\HBS.Xperience.TransformableViews\HBS.Xperience.TransformableViews.csproj" />
     <ProjectReference Include="..\StarterSite.Client\StarterSite.Client.csproj" />
     <ProjectReference Include="..\StarterSite.Logic\StarterSite.Logic.csproj" />

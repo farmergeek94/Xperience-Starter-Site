@@ -17,8 +17,21 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.25" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\HBS.Xperience.TransformableViewsShared\HBS.Xperience.TransformableViewsShared.csproj" />
-  </ItemGroup>
+
+    <ItemGroup>
+        <AdminClientPath Include="dist\**">
+            <ProjectName>xperience-transformable-views</ProjectName>
+        </AdminClientPath>
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <Folder Include="dist\" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <ProjectReference Include="..\HBS.Xperience.TransformableViewsShared\HBS.Xperience.TransformableViewsShared.csproj" />
+    </ItemGroup>
 
 </Project>
