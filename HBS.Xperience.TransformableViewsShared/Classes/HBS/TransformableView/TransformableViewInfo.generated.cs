@@ -101,6 +101,25 @@ namespace HBS.TransformableViews
             set => SetValue(nameof(TransformableViewGuid), value);
         }
 
+        /// <summary>
+        /// Transformable view guid.
+        /// </summary>
+        [DatabaseField]
+        public virtual bool TransformableViewIsListing
+        {
+            get => ValidationHelper.GetBoolean(GetValue(nameof(TransformableViewIsListing)), true);
+            set => SetValue(nameof(TransformableViewIsListing), value);
+        }
+
+        /// <summary>
+        /// Transformable view guid.
+        /// </summary>
+        [DatabaseField]
+        public virtual string TransformableViewForm
+        {
+            get => ValidationHelper.GetString(GetValue(nameof(TransformableViewForm)), "");
+            set => SetValue(nameof(TransformableViewForm), value);
+        }
 
         /// <summary>
         /// Transformable view last modified.

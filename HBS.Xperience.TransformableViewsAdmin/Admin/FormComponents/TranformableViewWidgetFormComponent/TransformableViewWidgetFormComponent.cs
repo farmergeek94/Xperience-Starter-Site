@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 namespace HBS.Xperience.TransformableViewsAdmin.Admin.FormComponents.TranformableViewFormComponent
 {
     [ComponentAttribute(typeof(TransformableViewWidgetFormComponentAttribute))]
-    public class TransformableViewWidgetFormComponent : FormComponent<TransformableViewWidgetFormComponentProperties, TransformableViewWidgetFormComponentClientProperties, TransformableViewWidgetFormComponentModel>
+    public class TransformableViewWidgetFormComponent : FormComponent<TransformableViewWidgetFormComponentClientProperties, TransformableViewWidgetFormComponentModel>
     {
         private readonly ITransformableViewRepository _transformableViewRepository;
 
@@ -32,9 +32,6 @@ namespace HBS.Xperience.TransformableViewsAdmin.Admin.FormComponents.Tranformabl
             IEnumerable<SelectListItem> views = await _transformableViewRepository.GetTransformableViewSelectItems();
             return ResponseFrom(views);
         }
-    }
-    public class TransformableViewWidgetFormComponentProperties : FormComponentProperties
-    {
     }
 
     public class TransformableViewWidgetFormComponentClientProperties : FormComponentClientProperties<TransformableViewWidgetFormComponentModel>

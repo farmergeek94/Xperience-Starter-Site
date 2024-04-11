@@ -33,10 +33,10 @@ namespace HBS.Xperience.TransformableViews.Components
         }
         public IViewComponentResult Invoke(TransformableViewWidgetFormComponentModel model)
         {
-            if (model.Inputs.Any())
+            if (model.TransformableInputs.Any())
             {
                 var eOb = new ExpandoObject() as IDictionary<string, object?>;
-                foreach(var input in model.Inputs)
+                foreach(var input in model.TransformableInputs)
                 {
                     var codeName = ValidationHelper.GetCodeName(input.Name);
                     eOb.Add(codeName, input.Value);

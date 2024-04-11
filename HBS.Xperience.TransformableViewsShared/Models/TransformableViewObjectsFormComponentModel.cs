@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HBS.Xperience.TransformableViewsShared.Models
 {
-    public class TransformableViewObjectsFormComponentModel
+    public class TransformableViewObjectsFormComponentModel : TransformableViewModelBase
     {
         public string ClassName { get; set; } = string.Empty;
         public string Columns { get; set; } = string.Empty;
@@ -15,8 +15,5 @@ namespace HBS.Xperience.TransformableViewsShared.Models
         public int? TopN { get; set; } = null;
 
         public string View {  get; set; } = string.Empty;
-        public string ViewTitle { get; set; } = string.Empty;
-        public string ViewClassNames { get; set; } = string.Empty;
-        public string ViewCustomContent { get; set; } = string.Empty;
     }
 }

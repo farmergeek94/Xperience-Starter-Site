@@ -3,10 +3,12 @@ using HBS.TransformableViews;
 using HBS.Xperience.TransformableViewsAdmin.Admin.UIPages;
 using HBS.Xperience.TransformableViewsShared.Services;
 using Kentico.Xperience.Admin.Base;
+using Kentico.Xperience.Admin.Base.UIPages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 [assembly: UIPage(typeof(TransformableViewApplicationPage), "hbs-transformable-view-editor", typeof(TransformableViewPage), "Transformable View Editor", TransformableViewPage.TemplateName, 0)]
@@ -104,7 +106,7 @@ namespace HBS.Xperience.TransformableViewsAdmin.Admin.UIPages
             {
                 view.TransformableViewContent = _encryptionService.DecryptString(view.TransformableViewContent);
             }
-            return ResponseFrom(views);
+            return ResponseFrom(views.DeSerializeForm());
         }
 
         [PageCommand]
@@ -117,6 +119,8 @@ namespace HBS.Xperience.TransformableViewsAdmin.Admin.UIPages
                 {
                     view.TransformableViewDisplayName = model.TransformableViewDisplayName;
                     view.TransformableViewContent = model.TransformableViewContent;
+                    view.TransformableViewIsListing = model.TransformableViewIsListing;
+                    view.TransformableViewForm = model.TransformableViewForm != null ? JsonSerializer.Serialize(model.TransformableViewForm) : string.Empty;
                     _transformableViewInfoProvider.Set(view);
                     return ResponseFrom((ITransformableViewItem)view).AddSuccessMessage("View saved");
                 }
@@ -128,8 +132,10 @@ namespace HBS.Xperience.TransformableViewsAdmin.Admin.UIPages
                     TransformableViewDisplayName = model.TransformableViewDisplayName,
                     TransformableViewContent = model.TransformableViewContent,
                     TransformableViewName = ValidationHelper.GetCodeName(model.TransformableViewDisplayName),
-                    TransformableViewTransformableViewCategoryID = model.TransformableViewTransformableViewCategoryID
-                };
+                    TransformableViewTransformableViewCategoryID = model.TransformableViewTransformableViewCategoryID,
+                    TransformableViewIsListing = model.TransformableViewIsListing,
+                    TransformableViewForm = model.TransformableViewForm != null ? JsonSerializer.Serialize(model.TransformableViewForm) : string.Empty
+            };
 
                 // Add guid if it fails.
                 try
@@ -161,6 +167,8 @@ namespace HBS.Xperience.TransformableViewsAdmin.Admin.UIPages
                     var view = views.First(x => x.TransformableViewID == viewModel.TransformableViewID);
                     view.TransformableViewDisplayName = viewModel.TransformableViewDisplayName;
                     view.TransformableViewContent = viewModel.TransformableViewContent;
+                    view.TransformableViewIsListing = viewModel.TransformableViewIsListing;
+                    view.TransformableViewForm = viewModel.TransformableViewForm != null ? JsonSerializer.Serialize(viewModel.TransformableViewForm) : string.Empty;
                     _transformableViewInfoProvider.Set(view);
                     viewList.Add(view);
                 }
@@ -198,7 +206,17 @@ namespace HBS.Xperience.TransformableViewsAdmin.Admin.UIPages
         public DateTime? TransformableViewLastRequested { get; set; }
         public string? TransformableViewName { get; set; }
         public int TransformableViewTransformableViewCategoryID { get; set; }
+        public bool TransformableViewIsListing { get; set; } = true;
+        public IEnumerable<TransformableViewFormItem>? TransformableViewForm { get; set; }
     }
+
+    public class TransformableViewFormItem
+    {
+        public string Type { get; set; }
+        public string Name { get; set; }
+    }
+
+
 
     // Contains properties that match the properties of the client template
     // Specify such classes as the generic parameter of Page<TClientProperties>
@@ -206,5 +224,27 @@ namespace HBS.Xperience.TransformableViewsAdmin.Admin.UIPages
     {
         // For example
         public IEnumerable<ITransformableViewCategoryItem> Categories { get; set; } = Enumerable.Empty<ITransformableViewCategoryItem>();
+    }
+
+    public static class TransformableViewPageHelper {
+        public static IEnumerable<TransformableViewModel> DeSerializeForm(this IEnumerable<ITransformableViewItem> items)
+        {
+            foreach (var item in items)
+            {
+                TransformableViewModel nItem = new()
+                {
+                    TransformableViewContent = item.TransformableViewContent,
+                    TransformableViewDisplayName = item.TransformableViewDisplayName,
+                    TransformableViewGuid = item.TransformableViewGuid,
+                    TransformableViewID = item.TransformableViewID,
+                    TransformableViewLastModified = item.TransformableViewLastModified,
+                    TransformableViewName = item.TransformableViewName,
+                    TransformableViewTransformableViewCategoryID = item.TransformableViewTransformableViewCategoryID,
+                    TransformableViewIsListing = item.TransformableViewIsListing,
+                    TransformableViewForm = !string.IsNullOrWhiteSpace(item.TransformableViewForm) ? JsonSerializer.Deserialize<IEnumerable<TransformableViewFormItem>>(item.TransformableViewForm) : null 
+                };
+                yield return nItem;
+            }
+        }
     }
 }

@@ -8,21 +8,21 @@ import ViewsDialog from '../TransformableViewObjects/Components/ViewsDialog'
 import InputTypeDialog from './Components/InputTypeDialog'
 
 interface TransformableViewWidgetFormComponentModel {
-    inputs?: InputType[]
+    transformableInputs?: TransformableViewInput[]
     view?: string
     viewTitle?: string
     viewClassNames?: string
     viewCustomContent?: string
 }
 
-interface InputType {
+interface TransformableViewInput {
     type: string
     name: string,
     value?:any | null
 }
 
 export const TransformableViewWidgetFormComponent = (props: FormComponentProps) => {
-    const [views, setViews] = useState<SelectListItem[]>([])
+    console.log(props)
     const [dialog, setDialog] = useState(false);
     const [viewsDialog, setViewsDialog] = useState(false);
 
@@ -30,36 +30,29 @@ export const TransformableViewWidgetFormComponent = (props: FormComponentProps) 
 
     const update = (type: string, name: string, val?: any) => {
         const newValue = { ...value };
-        const dict = newValue.inputs ? [...newValue.inputs] : [];
-        if (dict.find(x => x.name == name)) {
-            dict.forEach(x => {
-                if (x.name == name) {
-                    x.type = type;
-                    x.name = name;
-                    x.value = val;
+        const dict = newValue.transformableInputs && newValue.transformableInputs.length > 0 ? [...newValue.transformableInputs] : [];
+        const hasName = dict.find(x => x.name == name);
+        if (hasName) {
+            for (let i = 0; i < dict.length; i++) {
+                let item = dict[i];
+                if (item.name == name) {
+                    item = { ...item };
+                    item.type = type;
+                    item.name = name;
+                    item.value = val;
+                    dict[i] = item;
                 }
-            });
+            }
         } else {
             dict.push({ type, name, value: val });
         }
-        newValue.inputs = dict;
+        newValue.transformableInputs = dict;
         props.onChange && props.onChange(newValue);
     }
 
     const updateModel = (model: TransformableViewWidgetFormComponentModel) => {
         props.onChange && props.onChange(model);
     }
-
-    const { executeCommand } = useFormComponentCommandProvider();
-
-    useEffect(() => {
-        executeCommand && executeCommand<SelectListItem[]>(props, 'GetViews')
-            .then(data => {
-                if (data) {
-                    setViews(data);
-                }
-            });
-    }, [executeCommand]);
 
     return <FormItemWrapper
         label={props.label}
@@ -70,8 +63,8 @@ export const TransformableViewWidgetFormComponent = (props: FormComponentProps) 
         labelIcon={props.tooltip ? 'xp-i-circle' : undefined}
         labelIconTooltip={props.tooltip}
         childrenWrapperClassnames="transformable-view-widget">
-        {value.inputs && value.inputs.map(x => {
-            return <div style={{ paddingBottom: 10 }}>
+        {value.transformableInputs && value.transformableInputs.map(x => {
+            return <div key={ x.name } style={{ paddingBottom: 10 }}>
                 <Input label={x.name} value={x.value} type={ x.type as any } onChange={(e) => update(x.type ,x.name, e.currentTarget.value)} />
             </div>
         }) }
