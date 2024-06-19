@@ -12,7 +12,7 @@
     </ItemGroup>
     
   <ItemGroup>
-    <PackageReference Include="Kentico.Xperience.WebApp" Version="28.2.3" />
+    <PackageReference Include="Kentico.Xperience.WebApp" Version="29.1.4" />
   </ItemGroup>
     
 

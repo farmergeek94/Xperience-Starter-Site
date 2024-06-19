@@ -13,7 +13,5 @@ namespace HBS.Xperience.TransformableViewsShared.Models
         public string WhereCondition { get; set; } = string.Empty;
         public string OrderBy { get; set; } = string.Empty;
         public int? TopN { get; set; } = null;
-
-        public string View {  get; set; } = string.Empty;
     }
 }

@@ -18,6 +18,17 @@ namespace HBS.Xperience.Categories
     [Serializable, InfoCache(InfoCacheBy.ID | InfoCacheBy.Name | InfoCacheBy.Guid)]
     public partial class CategoryInfo : AbstractInfo<CategoryInfo, ICategoryInfoProvider>, ICategoryItem
     {
+        static CategoryInfo()
+        {
+            TYPEINFO = new ObjectTypeInfo(typeof(CategoryInfoProvider), OBJECT_TYPE, "hbs.category", "CategoryID", "CategoryLastModified", "CategoryGuid", "CategoryName", "CategoryDisplayName", null, "CategoryParentID", "hbs.category")
+            {
+                TouchCacheDependencies = true,
+                DependsOn = new List<ObjectDependency>()
+                {
+                    new ObjectDependency(",","")
+                },
+            };
+        }
         /// <summary>
         /// Object type.
         /// </summary>
@@ -27,7 +38,7 @@ namespace HBS.Xperience.Categories
         /// <summary>
         /// Type information.
         /// </summary>
-        public static readonly ObjectTypeInfo TYPEINFO = new ObjectTypeInfo(typeof(CategoryInfoProvider), OBJECT_TYPE, "hbs.category", "CategoryID", "CategoryLastModified", "CategoryGuid", "CategoryName", "CategoryDisplayName", null, "CategoryParentID", "hbs.category")
+        public static ObjectTypeInfo TYPEINFO = new ObjectTypeInfo(typeof(CategoryInfoProvider), OBJECT_TYPE, "hbs.category", "CategoryID", "CategoryLastModified", "CategoryGuid", "CategoryName", "CategoryDisplayName", null, "CategoryParentID", "hbs.category")
         {
             TouchCacheDependencies = true,
             DependsOn = new List<ObjectDependency>()

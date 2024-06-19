@@ -10,12 +10,11 @@ namespace HBS.Xperience.TransformableViewsShared.Models
     {
         public string Type { get; set; } = "text";
         public string Name { get; set; } = "";
-        public object Value { get; set; }
+        public object Value { get; set; } = new object();
     }
     public class TransformableViewWidgetFormComponentModel : TransformableViewModelBase
     {
         public List<TransformableViewInput> TransformableInputs { get; set; } = new List<TransformableViewInput>();// Enumerable.Empty<TransformableViewInput>();
-        public string View {  get; set; } = string.Empty;
 
     }
 }

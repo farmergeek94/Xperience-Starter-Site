@@ -11,5 +11,6 @@ namespace HBS.Xperience.TransformableViewsShared.Models
         public string ViewTitle { get; set; } = "";
         public string ViewClassNames { get; set; } = "";
         public string ViewCustomContent { get; set; } = "";
+        public string View { get; set; } = string.Empty;
     }
 }
