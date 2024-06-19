@@ -1,0 +1,10 @@
+﻿@using Kentico.Content.Web.Mvc.PageBuilder
+@using HBS.Xperience.TransformableViews.PageTemplates
+@addTagHelper *, HBS.Xperience.TransformableViews
+@model TemplateViewModel<TransformableViewPageTemplateProperties>
+
+@{
+    var page = Model.GetTemplateModel<dynamic>();
+}
+
+<vc:transformable-view-page view="@Model.Properties.View" model="page" />

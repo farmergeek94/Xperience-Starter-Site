@@ -7,4 +7,5 @@
     transformableViewLastRequested?: string
     transformableViewName?:string
     transformableViewTransformableViewCategoryID: number
+    transformableViewType: number
 }

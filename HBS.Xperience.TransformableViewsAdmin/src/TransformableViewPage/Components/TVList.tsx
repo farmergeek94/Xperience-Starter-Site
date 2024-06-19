@@ -62,7 +62,7 @@ export default ({ categoryID }: { categoryID: number }) => {
                 <Column>
                     <Row spacing={Spacing.L}>
                         <Column cols={Cols.Col2}>
-                            <Button fillContainer={true} label="Add View" color={ButtonColor.Primary} onClick={() => openDialog({ transformableViewContent: "", transformableViewDisplayName: "", transformableViewTransformableViewCategoryID: categoryID })}></Button>
+                            <Button fillContainer={true} label="Add View" color={ButtonColor.Primary} onClick={() => openDialog({ transformableViewContent: "", transformableViewDisplayName: "", transformableViewTransformableViewCategoryID: categoryID, transformableViewType: 0 })}></Button>
                         </Column>
                         <Column><Input placeholder="Search" value={search} type="text" onChange={(e) => setSearch(e.currentTarget.value)} clearButton={<span onClick={() => setSearch(undefined)}><Icon name={"xp-modal-close"} /></span>} /></Column>
                     </Row>

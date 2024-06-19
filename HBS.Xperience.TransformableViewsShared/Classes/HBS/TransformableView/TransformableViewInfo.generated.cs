@@ -91,6 +91,17 @@ namespace HBS.TransformableViews_Experience
 
 
         /// <summary>
+        /// Transformable view type.
+        /// </summary>
+        [DatabaseField]
+        public virtual int TransformableViewType
+        {
+            get => ValidationHelper.GetInteger(GetValue(nameof(TransformableViewType)), 0);
+            set => SetValue(nameof(TransformableViewType), value);
+        }
+
+
+        /// <summary>
         /// Transformable view guid.
         /// </summary>
         [DatabaseField]
@@ -98,17 +109,6 @@ namespace HBS.TransformableViews_Experience
         {
             get => ValidationHelper.GetGuid(GetValue(nameof(TransformableViewGuid)), Guid.Empty);
             set => SetValue(nameof(TransformableViewGuid), value);
-        }
-
-
-        /// <summary>
-        /// Transformable view is listing.
-        /// </summary>
-        [DatabaseField]
-        public virtual bool TransformableViewIsListing
-        {
-            get => ValidationHelper.GetBoolean(GetValue(nameof(TransformableViewIsListing)), true);
-            set => SetValue(nameof(TransformableViewIsListing), value);
         }
 
 

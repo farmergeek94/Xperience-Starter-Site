@@ -9,7 +9,7 @@
         DateTime TransformableViewLastModified { get; set; }
         string TransformableViewName { get; set; }
         int TransformableViewTransformableViewCategoryID { get; set; }
-        bool TransformableViewIsListing { get; set; }
+        int TransformableViewType { get; set; }
         string TransformableViewForm { get; set; }
     }
 }

@@ -17,11 +17,5 @@ namespace HBS.TransformableViews_Experience
             : base(TransformableViewInfo.TYPEINFO)
         {
         }
-
-        public override void Set(TransformableViewInfo info)
-        {
-            var service = Service.Resolve<IEncryptionService>();
-            base.Set(service.EncryptView(info));
-        }
     }
 }

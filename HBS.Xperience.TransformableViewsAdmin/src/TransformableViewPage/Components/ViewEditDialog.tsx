@@ -1,5 +1,5 @@
 ﻿import React, { useContext, useEffect, useState } from 'react'
-import { CodeEditor, CodeEditorLanguage, Dialog, Input, TextWithLabel } from '@kentico/xperience-admin-components';
+import { CodeEditor, CodeEditorLanguage, Dialog, Input, MenuItem, Select, TextWithLabel } from '@kentico/xperience-admin-components';
 import TransformableViewItem from '../../Shared/TransformableViewItem';
 
 export interface ViewDialogOptions {
@@ -11,6 +11,7 @@ export interface ViewDialogOptions {
 
 export default ({ selectedView, setViewsCommand, open, closeDialog }: ViewDialogOptions) => {
     const [displayName, setDisplayName] = useState(selectedView?.transformableViewDisplayName);
+    const [transformableViewType, setTransformableViewType] = useState(selectedView?.transformableViewType);
     const [content, setContent] = useState(selectedView?.transformableViewContent);
 
     const handleCancel = () => {
@@ -18,7 +19,7 @@ export default ({ selectedView, setViewsCommand, open, closeDialog }: ViewDialog
     }
 
     const handleConfirm = () => {
-        selectedView && setViewsCommand({ ...selectedView, transformableViewDisplayName: displayName ?? "", transformableViewContent: content ?? "" });
+        selectedView && setViewsCommand({ ...selectedView, transformableViewDisplayName: displayName ?? "", transformableViewContent: content ?? "", transformableViewType: transformableViewType ?? 0 });
         closeDialog();
     }
 
@@ -28,6 +29,14 @@ export default ({ selectedView, setViewsCommand, open, closeDialog }: ViewDialog
         </div>
         <div style={{ paddingBottom: 20 }}>
             <Input label="Code Name" value={selectedView?.transformableViewName} disabled={ true } />
+        </div>
+        <div style={{ paddingBottom: 20 }}>
+            <Select value={transformableViewType?.toString()} onChange={(val) => selectedView && setTransformableViewType(Number(val)) }>
+                <MenuItem value={"0"} primaryLabel="Layout" />
+                <MenuItem value={"1"} primaryLabel="Page" />
+                <MenuItem value={"2"} primaryLabel="Listing" />
+                <MenuItem value={"3"} primaryLabel="Transformable" />
+            </Select>
         </div>
         <div>
             <TextWithLabel label="View Editor" value={ `<div><span style="color: #af00db;">@addTagHelper</span> <span style="color: #a31515;">*, Microsoft.AspNetCore.Mvc.TagHelpers</span></div><div><span style="color: #af00db;">@model</span> <span style="color: #267f99;">HBS</span><span style="color: #000000;">.</span><span style="color: #267f99;">Xperience</span><span style="color: #000000;">.</span><span style="color: #267f99;">TransformableViews</span><span style="color: #000000;">.</span><span style="color: #267f99;">Models</span><span style="color: #000000;">.</span><span style="color: #267f99;">TransformableViewModel</span></div>` } valueAsHtml={true} />

@@ -3,6 +3,7 @@ using CMS.DataEngine;
 using CMS.Helpers;
 using HBS.TransformableViews;
 using HBS.TransformableViews_Experience;
+using HBS.Xperience.TransformableViewsShared.Library;
 using HBS.Xperience.TransformableViewsShared.Models;
 using HBS.Xperience.TransformableViewsShared.Services;
 using Kentico.Xperience.Admin.Base;
@@ -62,10 +63,16 @@ namespace HBS.Xperience.TransformableViewsShared.Repositories
         public async Task<IEnumerable<SelectListItem>> GetTransformableViewSelectItems()
         {
             var names = await TransformableViewNames();
-            return names.Select(x=>new SelectListItem(x.TransformableViewDisplayName, x.TransformableViewName));
+            return names.Where(x => x.TransformableViewTypeEnum == TransformableViewTypeEnum.Transformable).Select(x=>new SelectListItem(x.TransformableViewDisplayName, x.TransformableViewName));
         }
 
-        private async Task<IEnumerable<ITransformableViewItem>> TransformableViewNames()
+        public async Task<IEnumerable<SelectListItem>> GetTransformableViewObjectSelectItems()
+        {
+            var names = await TransformableViewNames();
+            return names.Where(x=>x.TransformableViewTypeEnum == TransformableViewTypeEnum.Listing).Select(x => new SelectListItem(x.TransformableViewDisplayName, x.TransformableViewName));
+        }
+
+        private async Task<IEnumerable<TransformableViewInfo>> TransformableViewNames()
         {
             return await _progressiveCache.LoadAsync(async (cs) =>
             {
@@ -76,7 +83,7 @@ namespace HBS.Xperience.TransformableViewsShared.Repositories
                         });
                 }
                 return await _transformableViewInfoProvider.Get()
-                .Columns(nameof(TransformableViewInfo.TransformableViewName), nameof(TransformableViewInfo.TransformableViewDisplayName)).GetEnumerableTypedResultAsync();
+                .Columns(nameof(TransformableViewInfo.TransformableViewName), nameof(TransformableViewInfo.TransformableViewDisplayName), nameof(TransformableViewInfo.TransformableViewType)).GetEnumerableTypedResultAsync();
             }, new CacheSettings(86400 * 365, "GetTransformableViewInfoNames"));
         }
 

@@ -10,6 +10,7 @@ namespace HBS.Xperience.TransformableViewsShared.Repositories
 
         Task<IEnumerable<dynamic>> GetObjectItems(TransformableViewObjectsFormComponentModel model);
         ITransformableViewItem? GetTransformableView(string viewName, bool update = false);
+        Task<IEnumerable<SelectListItem>> GetTransformableViewObjectSelectItems();
         Task<IEnumerable<SelectListItem>> GetTransformableViewSelectItems();
     }
 }

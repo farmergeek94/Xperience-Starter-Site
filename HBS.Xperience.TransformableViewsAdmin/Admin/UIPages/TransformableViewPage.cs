@@ -120,7 +120,7 @@ namespace HBS.Xperience.TransformableViewsAdmin.Admin.UIPages
                 {
                     view.TransformableViewDisplayName = model.TransformableViewDisplayName;
                     view.TransformableViewContent = model.TransformableViewContent;
-                    view.TransformableViewIsListing = model.TransformableViewIsListing;
+                    view.TransformableViewType = model.TransformableViewType;
                     view.TransformableViewForm = model.TransformableViewForm != null ? JsonSerializer.Serialize(model.TransformableViewForm) : string.Empty;
                     _transformableViewInfoProvider.Set(view);
                     return ResponseFrom((ITransformableViewItem)view).AddSuccessMessage("View saved");
@@ -134,7 +134,7 @@ namespace HBS.Xperience.TransformableViewsAdmin.Admin.UIPages
                     TransformableViewContent = model.TransformableViewContent,
                     TransformableViewName = ValidationHelper.GetCodeName(model.TransformableViewDisplayName),
                     TransformableViewTransformableViewCategoryID = model.TransformableViewTransformableViewCategoryID,
-                    TransformableViewIsListing = model.TransformableViewIsListing,
+                    TransformableViewType = model.TransformableViewType,
                     TransformableViewForm = model.TransformableViewForm != null ? JsonSerializer.Serialize(model.TransformableViewForm) : string.Empty
             };
 
@@ -168,7 +168,7 @@ namespace HBS.Xperience.TransformableViewsAdmin.Admin.UIPages
                     var view = views.First(x => x.TransformableViewID == viewModel.TransformableViewID);
                     view.TransformableViewDisplayName = viewModel.TransformableViewDisplayName;
                     view.TransformableViewContent = viewModel.TransformableViewContent;
-                    view.TransformableViewIsListing = viewModel.TransformableViewIsListing;
+                    view.TransformableViewType = viewModel.TransformableViewType;
                     view.TransformableViewForm = viewModel.TransformableViewForm != null ? JsonSerializer.Serialize(viewModel.TransformableViewForm) : string.Empty;
                     _transformableViewInfoProvider.Set(view);
                     viewList.Add(view);
@@ -207,7 +207,7 @@ namespace HBS.Xperience.TransformableViewsAdmin.Admin.UIPages
         public DateTime? TransformableViewLastRequested { get; set; }
         public string? TransformableViewName { get; set; }
         public int TransformableViewTransformableViewCategoryID { get; set; }
-        public bool TransformableViewIsListing { get; set; } = true;
+        public int TransformableViewType { get; set; } = 0;
         public IEnumerable<TransformableViewFormItem>? TransformableViewForm { get; set; }
     }
 
@@ -241,7 +241,7 @@ namespace HBS.Xperience.TransformableViewsAdmin.Admin.UIPages
                     TransformableViewLastModified = item.TransformableViewLastModified,
                     TransformableViewName = item.TransformableViewName,
                     TransformableViewTransformableViewCategoryID = item.TransformableViewTransformableViewCategoryID,
-                    TransformableViewIsListing = item.TransformableViewIsListing,
+                    TransformableViewType = item.TransformableViewType,
                     TransformableViewForm = !string.IsNullOrWhiteSpace(item.TransformableViewForm) ? JsonSerializer.Deserialize<IEnumerable<TransformableViewFormItem>>(item.TransformableViewForm) : null 
                 };
                 yield return nItem;

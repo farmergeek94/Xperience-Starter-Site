@@ -6,9 +6,10 @@ namespace HBS.Xperience.TransformableViews
 {
     public static class TransformableViewServices
     {
-        public static IMvcBuilder WithTransformableViewsProvider(this IMvcBuilder builder)
+        public static IMvcBuilder UseTransformableViewsProvider(this IMvcBuilder builder)
         {
             builder.AddRazorRuntimeCompilation(cs => cs.FileProviders.Add(new TransformableViewFileProvider()));
+            builder.Services.AddSingleton<WebPageRetriever>();
             return builder;
         }
     }
