@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Components\Widgets\" />
     <Folder Include="Views\" />
   </ItemGroup>
 
@@ -21,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\HBS.Xperience.TransformableViews\HBS.Xperience.TransformableViews.csproj" />
     <ProjectReference Include="..\StarterSite.Logic\StarterSite.Logic.csproj" />
     <ProjectReference Include="..\StarterSite.Types\StarterSite.Types.csproj" />
   </ItemGroup>

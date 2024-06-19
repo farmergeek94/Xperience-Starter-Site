@@ -7,7 +7,6 @@ namespace StarterSite.Logic
         public static IServiceCollection AddLogic(this IServiceCollection services)
         {
             services.AddSingleton<IWebPageRepository, WebPageRepository>();
-            services.AddSingleton<IFaqRepository, FaqRepository>();
             services.AddSingleton<IPageBuilderRepository, PageBuilderRepository>();
             services.AddSingleton<INavigationRepository, NavigationRepository>();
 
