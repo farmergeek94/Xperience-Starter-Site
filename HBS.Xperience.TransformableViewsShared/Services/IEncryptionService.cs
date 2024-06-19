@@ -1,4 +1,5 @@
 ﻿using HBS.TransformableViews;
+using HBS.TransformableViews_Experience;
 
 namespace HBS.Xperience.TransformableViewsShared.Services
 {

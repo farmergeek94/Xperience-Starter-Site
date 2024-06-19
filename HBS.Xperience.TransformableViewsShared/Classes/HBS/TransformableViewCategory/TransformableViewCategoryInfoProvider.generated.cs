@@ -1,6 +1,6 @@
 using CMS.DataEngine;
 
-namespace HBS.TransformableViews
+namespace HBS.TransformableViews_Experience
 {
     /// <summary>
     /// Class providing <see cref="TransformableViewCategoryInfo"/> management.

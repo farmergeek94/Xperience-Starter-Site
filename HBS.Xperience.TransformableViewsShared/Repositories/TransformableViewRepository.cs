@@ -2,6 +2,7 @@
 using CMS.DataEngine;
 using CMS.Helpers;
 using HBS.TransformableViews;
+using HBS.TransformableViews_Experience;
 using HBS.Xperience.TransformableViewsShared.Models;
 using HBS.Xperience.TransformableViewsShared.Services;
 using Kentico.Xperience.Admin.Base;

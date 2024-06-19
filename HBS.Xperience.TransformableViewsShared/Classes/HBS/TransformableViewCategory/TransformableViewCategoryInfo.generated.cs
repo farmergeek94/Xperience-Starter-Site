@@ -2,21 +2,23 @@ using System;
 using System.Data;
 using System.Runtime.Serialization;
 using System.Collections.Generic;
+using System.Linq;
 
 using CMS;
 using CMS.DataEngine;
 using CMS.Helpers;
+using HBS.TransformableViews_Experience;
 using HBS.TransformableViews;
 
 [assembly: RegisterObjectType(typeof(TransformableViewCategoryInfo), TransformableViewCategoryInfo.OBJECT_TYPE)]
 
-namespace HBS.TransformableViews
+namespace HBS.TransformableViews_Experience
 {
     /// <summary>
     /// Data container class for <see cref="TransformableViewCategoryInfo"/>.
     /// </summary>
     [Serializable, InfoCache(InfoCacheBy.ID | InfoCacheBy.Name | InfoCacheBy.Guid)]
-    public partial class TransformableViewCategoryInfo : AbstractInfo<TransformableViewCategoryInfo, ITransformableViewCategoryInfoProvider>, ITransformableViewCategoryItem
+    public partial class TransformableViewCategoryInfo : AbstractInfo<TransformableViewCategoryInfo, ITransformableViewCategoryInfoProvider>, IInfoWithId, IInfoWithName, IInfoWithGuid, ITransformableViewCategoryItem
     {
         /// <summary>
         /// Object type.
@@ -27,12 +29,9 @@ namespace HBS.TransformableViews
         /// <summary>
         /// Type information.
         /// </summary>
-        public static readonly ObjectTypeInfo TYPEINFO = new ObjectTypeInfo(typeof(TransformableViewCategoryInfoProvider), OBJECT_TYPE, "HBS.TransformableViewCategory", "TransformableViewCategoryID", "TransformableViewCategoryLastModified", "TransformableViewCategoryGuid", "TransformableViewCategoryName", "TransformableViewCategoryDisplayName", null, "TransformableViewCategoryParentID", "hbs.transformableviewcategory")
+        public static readonly ObjectTypeInfo TYPEINFO = new ObjectTypeInfo(typeof(TransformableViewCategoryInfoProvider), OBJECT_TYPE, "HBS.TransformableViewCategory", "TransformableViewCategoryID", "TransformableViewCategoryLastModified", "TransformableViewCategoryGuid", "TransformableViewCategoryName", "TransformableViewCategoryDisplayName", null, null, "hbs.transformableviewcategory")
         {
             TouchCacheDependencies = true,
-            DependsOn = new List<ObjectDependency>()
-            {
-            },
         };
 
 
@@ -86,14 +85,7 @@ namespace HBS.TransformableViews
         [DatabaseField]
         public virtual int? TransformableViewCategoryParentID
         {
-            get
-            {
-                if (int.TryParse(GetValue(nameof(TransformableViewCategoryParentID))?.ToString(), out int outval))
-                {
-                    return outval;
-                }
-                return null;
-            }
+            get => ValidationHelper.GetValue<int?>(GetValue(nameof(TransformableViewCategoryParentID)), null);
             set => SetValue(nameof(TransformableViewCategoryParentID), value, null);
         }
 
@@ -117,16 +109,6 @@ namespace HBS.TransformableViews
         {
             get => ValidationHelper.GetDateTime(GetValue(nameof(TransformableViewCategoryLastModified)), DateTimeHelper.ZERO_TIME);
             set => SetValue(nameof(TransformableViewCategoryLastModified), value);
-        }
-
-        /// <summary>
-        /// Transformable view category last modified.
-        /// </summary>
-        [DatabaseField]
-        public virtual DateTime TransformableViewLastRequested
-        {
-            get => ValidationHelper.GetDateTime(GetValue(nameof(TransformableViewLastRequested)), DateTimeHelper.ZERO_TIME);
-            set => SetValue(nameof(TransformableViewLastRequested), value);
         }
 
 

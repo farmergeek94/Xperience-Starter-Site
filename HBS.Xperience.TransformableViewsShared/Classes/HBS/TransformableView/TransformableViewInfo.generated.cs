@@ -2,21 +2,23 @@ using System;
 using System.Data;
 using System.Runtime.Serialization;
 using System.Collections.Generic;
+using System.Linq;
 
 using CMS;
 using CMS.DataEngine;
 using CMS.Helpers;
+using HBS.TransformableViews_Experience;
 using HBS.TransformableViews;
 
 [assembly: RegisterObjectType(typeof(TransformableViewInfo), TransformableViewInfo.OBJECT_TYPE)]
 
-namespace HBS.TransformableViews
+namespace HBS.TransformableViews_Experience
 {
     /// <summary>
     /// Data container class for <see cref="TransformableViewInfo"/>.
     /// </summary>
     [Serializable, InfoCache(InfoCacheBy.ID | InfoCacheBy.Name | InfoCacheBy.Guid)]
-    public partial class TransformableViewInfo : AbstractInfo<TransformableViewInfo, ITransformableViewInfoProvider>, ITransformableViewItem
+    public partial class TransformableViewInfo : AbstractInfo<TransformableViewInfo, ITransformableViewInfoProvider>, IInfoWithId, IInfoWithName, IInfoWithGuid, ITransformableViewItem
     {
         /// <summary>
         /// Object type.
@@ -27,12 +29,9 @@ namespace HBS.TransformableViews
         /// <summary>
         /// Type information.
         /// </summary>
-        public static readonly ObjectTypeInfo TYPEINFO = new ObjectTypeInfo(typeof(TransformableViewInfoProvider), OBJECT_TYPE, "HBS.TransformableView", "TransformableViewID", "TransformableViewLastModified", "TransformableViewGuid", "TransformableViewName", "TransformableViewDisplayName", null, "TransformableViewTransformableViewCategoryID", "hbs.transformableviewcategory")
+        public static readonly ObjectTypeInfo TYPEINFO = new ObjectTypeInfo(typeof(TransformableViewInfoProvider), OBJECT_TYPE, "HBS.TransformableView", "TransformableViewID", "TransformableViewLastModified", "TransformableViewGuid", "TransformableViewName", "TransformableViewDisplayName", null, null, "hbs.transformableviewcategory")
         {
             TouchCacheDependencies = true,
-            DependsOn = new List<ObjectDependency>()
-            {
-            },
         };
 
 
@@ -101,8 +100,9 @@ namespace HBS.TransformableViews
             set => SetValue(nameof(TransformableViewGuid), value);
         }
 
+
         /// <summary>
-        /// Transformable view guid.
+        /// Transformable view is listing.
         /// </summary>
         [DatabaseField]
         public virtual bool TransformableViewIsListing
@@ -111,15 +111,17 @@ namespace HBS.TransformableViews
             set => SetValue(nameof(TransformableViewIsListing), value);
         }
 
+
         /// <summary>
-        /// Transformable view guid.
+        /// Transformable view form.
         /// </summary>
         [DatabaseField]
         public virtual string TransformableViewForm
         {
-            get => ValidationHelper.GetString(GetValue(nameof(TransformableViewForm)), "");
+            get => ValidationHelper.GetString(GetValue(nameof(TransformableViewForm)), String.Empty);
             set => SetValue(nameof(TransformableViewForm), value);
         }
+
 
         /// <summary>
         /// Transformable view last modified.
