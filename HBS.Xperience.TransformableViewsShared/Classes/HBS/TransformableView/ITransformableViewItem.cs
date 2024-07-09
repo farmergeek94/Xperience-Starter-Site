@@ -8,7 +8,7 @@
         int TransformableViewID { get; set; }
         DateTime TransformableViewLastModified { get; set; }
         string TransformableViewName { get; set; }
-        int TransformableViewTransformableViewCategoryID { get; set; }
+        int TransformableViewTransformableViewTagID { get; set; }
         int TransformableViewType { get; set; }
         string TransformableViewForm { get; set; }
     }

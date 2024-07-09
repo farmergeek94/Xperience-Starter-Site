@@ -1,6 +1,4 @@
-using CMS.Core;
 using CMS.DataEngine;
-using HBS.Xperience.TransformableViewsShared.Services;
 
 namespace HBS.TransformableViews_Experience
 {

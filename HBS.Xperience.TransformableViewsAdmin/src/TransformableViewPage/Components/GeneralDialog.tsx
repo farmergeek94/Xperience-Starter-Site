@@ -4,7 +4,7 @@ import { Dialog, Input } from '@kentico/xperience-admin-components';
 export default () => {
     const { setCategory, deleteCategory, dialogOptions, setDialog, selectedCategory } = useContext(TVCategoryListContext);
     const [displayName, setDisplayName] = useState("");
-    useEffect(() => { setDisplayName(selectedCategory?.transformableViewCategoryDisplayName ?? "") }, [selectedCategory])
+    useEffect(() => { setDisplayName(selectedCategory?.transformableViewCategoryTitle ?? "") }, [selectedCategory])
     const handleCancel = () => {
         setDialog({ dialogOptions: { ...dialogOptions, isOpen: false }, selectCategory: null })
     }

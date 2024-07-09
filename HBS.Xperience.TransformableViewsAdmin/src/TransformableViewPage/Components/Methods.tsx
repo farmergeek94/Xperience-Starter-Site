@@ -2,7 +2,8 @@
 import TransformableViewCategoryItem, { ITransformableViewCategoryItem } from "../../Shared/TransformableViewCategoryItem";
 
 export interface TVCategoryListPageTemplateProperties {
-    categories: TransformableViewCategoryItem[];
+    tags: TransformableViewCategoryItem[];
+    taxonomies: TransformableViewCategoryItem[];
 }
 
 export interface TVCategoryListDialogOptions {
@@ -18,13 +19,11 @@ export interface TVCategoryListPageState extends TVCategoryListPageTemplatePrope
 }
 
 export interface ITVCategoryListContext {
-    setCategory: (value: TransformableViewCategoryItem) => void
-    setCategories: (value: TransformableViewCategoryItem[]) => void
-    deleteCategory: (value: number) => void
     setCurrentCategory: (value?: TransformableViewCategoryItem | null) => void
     setDialog: (x: TVDialogAction) => void
     dialogOptions: TVCategoryListDialogOptions
-    categories: TransformableViewCategoryItem[],
+    tags: TransformableViewCategoryItem[],
+    taxonomies: TransformableViewCategoryItem[],
     selectedCategory?: TransformableViewCategoryItem | null
 }
 
@@ -33,46 +32,19 @@ export interface TVDialogAction {
     selectCategory?: TransformableViewCategoryItem | null
 }
 
-export type TVCategoryActions = { type: "categorySet", data: ITransformableViewCategoryItem }
-    | { type: "categoriesSet", data: ITransformableViewCategoryItem[] }
-    | { type: "categorySelect", data?: ITransformableViewCategoryItem | null }
-    | { type: "categoryDelete", data: number }
+export type TVCategoryActions = { type: "categorySelect", data?: ITransformableViewCategoryItem | null }
     | { type: "setDialog", data: TVDialogAction }
 
 export const TVCategoryListReducer = (state: TVCategoryListPageState, action: TVCategoryActions) => {
     const { type, data } = action;
     const newState = { ...state };
     switch (type) {
-        case "categorySet":
-            newState.categories = [...newState.categories];
-            const objIndex = newState.categories.findIndex((obj => obj.transformableViewCategoryID == data.transformableViewCategoryID));
-            if (objIndex > -1) {
-                newState.categories[objIndex] = data;
-            } else {
-                newState.categories.push(data);
-            }
-            newState.selectedCategory = null;
-            break;
         case "categorySelect":
             newState.selectedCategory = data;
-            break;
-        case "categoryDelete":
-            newState.categories = newState.categories.filter(x => x.transformableViewCategoryID != data);
             break;
         case "setDialog":
             newState.dialogOptions = data.dialogOptions;
             newState.selectedCategory = data.selectCategory;
-            break;
-        case "categoriesSet":
-            newState.categories = [...newState.categories];
-            for (const cat of data) {
-                const objIndex = newState.categories.findIndex((obj => obj.transformableViewCategoryID == cat.transformableViewCategoryID));
-                if (objIndex > -1) {
-                    newState.categories[objIndex] = cat;
-                } else {
-                    newState.categories.push(cat);
-                }
-            }
             break;
     }
     return newState;
@@ -86,10 +58,7 @@ export const dialogDefaults = {
 
 export const TVCategoryListContext = createContext<ITVCategoryListContext>({
     setCurrentCategory: (x?: ITransformableViewCategoryItem | null) => { },
-    setCategory: (x: ITransformableViewCategoryItem) => { },
-    setCategories: (x: ITransformableViewCategoryItem[]) => { },
-    deleteCategory: (x: number) => { },
     setDialog: (x: TVDialogAction) => { },
     dialogOptions: dialogDefaults,
-    categories: []
+    tags: []
 });

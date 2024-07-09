@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Configurations>Debug;Release;QA</Configurations>
   </PropertyGroup>
   <ItemGroup>
@@ -11,7 +11,6 @@
     <PackageReference Include="kentico.xperience.webapp" Version="29.1.4" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\HBS.Xperience.Categories\HBS.Xperience.Categories.csproj" />
     <ProjectReference Include="..\HBS.Xperience.TransformableViewsAdmin\HBS.Xperience.TransformableViewsAdmin.csproj" />
     <ProjectReference Include="..\HBS.Xperience.TransformableViews\HBS.Xperience.TransformableViews.csproj" />
     <ProjectReference Include="..\StarterSite.Client\StarterSite.Client.csproj" />

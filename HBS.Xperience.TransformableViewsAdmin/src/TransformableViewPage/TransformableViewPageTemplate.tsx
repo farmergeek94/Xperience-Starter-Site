@@ -9,9 +9,10 @@ import TVTreeView from './Components/TVTreeView';
 import TVList from './Components/TVList';
 
 
-export const TransformableViewPageTemplate = ({ categories }: TVCategoryListPageTemplateProperties) => {
+export const TransformableViewPageTemplate = ({ tags, taxonomies }: TVCategoryListPageTemplateProperties) => {
     const [state, dispatch] = useReducer(TVCategoryListReducer, {
-        categories,
+        tags,
+        taxonomies,
         dialogOptions: dialogDefaults,
     });
 
@@ -24,30 +25,6 @@ export const TransformableViewPageTemplate = ({ categories }: TVCategoryListPage
         }
     }, [rowRef.current])
 
-    const { execute: setCategoryCommand } = usePageCommand<ITransformableViewCategoryItem, ITransformableViewCategoryItem | null>("SetCategory", {
-        after: (response) => {
-            if (response) {
-                dispatch({ type: "categorySet", data: response });
-            }
-        }
-    });
-
-    const { execute: setCategoriesCommand } = usePageCommand<ITransformableViewCategoryItem[], ITransformableViewCategoryItem[] | null>("SetCategories", {
-        after: (response) => {
-            if (response) {
-                dispatch({ type: "categoriesSet", data: response });
-            }
-        }
-    });
-
-    const { execute: deleteCategoryCommand } = usePageCommand<number, number | undefined>("DeleteCategory", {
-        after: (response) => {
-            if (response) {
-                dispatch({ type: "categoryDelete", data: response });
-            }
-        }
-    });
-
     const setCurrentCategory = (value?: TransformableViewCategoryItem | null) => {
         dispatch({ type: "categorySelect", data: value });
     }
@@ -56,36 +33,15 @@ export const TransformableViewPageTemplate = ({ categories }: TVCategoryListPage
         dispatch({ type: "setDialog", data });
     }
 
-    const setCategory = (item: TransformableViewCategoryItem) => {
-        if (!item.transformableViewCategoryID) {
-            var siblings = state.categories.filter(x => x.transformableViewCategoryParentID == item.transformableViewCategoryParentID);
-            var order = Math.max(...categories.map(x => x.transformableViewCategoryOrder ?? 0), 0);
-            item.transformableViewCategoryOrder = order + 1;
-        } else {
-            dispatch({ type: "categorySet", data: item })
-        }
-        setCategoryCommand(item);
-    }
-
-    const setCategories = (items: ITransformableViewCategoryItem[]) => {
-        var sortedItems = items.map((x, i) => { x.transformableViewCategoryOrder = i; return x });
-        dispatch({ type: "categoriesSet", data: items })
-        setCategoriesCommand(sortedItems);
-    }
-
-    const deleteCategory = (id: number) => {
-        deleteCategoryCommand(id);
-    }
-
     return <div style={{ display: 'flex', flexDirection: "column", height: "100%" }}>
         <div style={{ paddingBottom: 20 }}><Headline size={HeadlineSize.M}>Transformable Views</Headline></div>
         <div style={{ flex: 1 }}>
-            <TVCategoryListContext.Provider value={{ setCategory, setCategories, deleteCategory, setCurrentCategory, dialogOptions: state.dialogOptions, setDialog, categories: state.categories, selectedCategory: state.selectedCategory }}>
+            <TVCategoryListContext.Provider value={{ setCurrentCategory, dialogOptions: state.dialogOptions, setDialog, tags: state.tags, selectedCategory: state.selectedCategory, taxonomies: state.taxonomies }}>
                 <Row ref={rowRef}>
                     <Column cols={Cols.Col3} className="treeview-wrapper">
                         <Paper fullHeight={true}>
                             <div style={{ padding: 20 }}>
-                                <div style={{ paddingBottom: 20 }}><Headline size={HeadlineSize.S}>Categories</Headline></div>
+                                <div style={{ paddingBottom: 20 }}><Headline size={HeadlineSize.S}>Taxonomies</Headline></div>
                                 <div style={{ paddingBottom: 20 }}><Divider orientation={DividerOrientation.Horizontal} /></div>
                                 <TVTreeView />
                             </div>
@@ -101,7 +57,6 @@ export const TransformableViewPageTemplate = ({ categories }: TVCategoryListPage
                         </Paper>
                     </Column>
                 </Row>
-                {state.selectedCategory && <CategoriesDialog />}
             </TVCategoryListContext.Provider>
         </div>
     </div>

@@ -56,7 +56,7 @@ namespace HBS.Xperience.TransformableViews.Models
             }
         }
 
-        public IDisposable RegisterChangeCallback(Action<object> callback, object state) => EmptyDisposable.Instance;
+        public IDisposable RegisterChangeCallback(Action<object?> callback, object? state) => EmptyDisposable.Instance;
 
         internal class EmptyDisposable : IDisposable
         {
