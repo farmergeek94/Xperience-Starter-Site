@@ -3,6 +3,7 @@ using CMS.ContentEngine.Internal;
 using CMS.Core;
 using CMS.DataEngine;
 using CMS.Helpers;
+using CMS.Websites.PageBuilder.Internal;
 using HBS.TransformableViews_Experience;
 using HBS.Xperience.TransformableViews.Components;
 using HBS.Xperience.TransformableViews.Repositories;
@@ -10,16 +11,25 @@ using HBS.Xperience.TransformableViewsShared.Library;
 using HBS.Xperience.TransformableViewsShared.Models;
 using HBS.Xperience.TransformableViewsShared.Repositories;
 using Kentico.Forms.Web.Mvc;
+using Kentico.Forms.Web.Mvc.Internal;
+using Kentico.Forms.Web.Mvc.Widgets.Internal;
 using Kentico.PageBuilder.Web.Mvc;
+using Kentico.PageBuilder.Web.Mvc.Internal;
+using Kentico.Web.Mvc;
 using Kentico.Xperience.Admin.Base.FormAnnotations;
 using Kentico.Xperience.Admin.Base.Forms;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.Primitives;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 [assembly: RegisterWidget(
@@ -49,18 +59,19 @@ namespace HBS.Xperience.TransformableViews.Components
         {
             if (properties.ContentType.Any())
             {
-                var columNames = await _webPageRetriever.GetClassColumnNames(properties.ContentType.First().ObjectCodeName);
+                var type = (await DataClassInfoProvider.ProviderObject.Get().WhereEquals(nameof(DataClassInfo.ClassGUID), properties.ContentType.First().ObjectGuid).GetEnumerableTypedResultAsync()).FirstOrDefault();
+                var columNames = await _webPageRetriever.GetClassColumnsNames(type);
 
                 // Builds the query - the content type must match the one configured for the selector
                 var query = new ContentItemQueryBuilder()
-                                .ForContentType(properties.ContentType.First().ObjectCodeName,
+                                .ForContentType(type.ClassName,
                                       config => config
                                         .Where(where =>
                                         where
                                                 .WhereIn(nameof(IContentQueryDataContainer.ContentItemGUID), properties.SelectedContent.Select(x => x.Identifier).ToList())
                                         ));
 
-                var items = await _contentQueryExecutor.GetResult(query, map =>
+                IEnumerable<ExpandoObject> items = (await _contentQueryExecutor.GetResult(query, map =>
                 {
                     var eOb = new ExpandoObject() as IDictionary<string, object?>;
                     eOb.Add(nameof(map.ContentItemID), map.ContentItemID);
@@ -80,7 +91,7 @@ namespace HBS.Xperience.TransformableViews.Components
                         }
                     }
                     return (ExpandoObject)eOb; 
-                });
+                })).ToArray();
 
                 var viewModel = new TransformableViewModel()
                 {
@@ -89,6 +100,8 @@ namespace HBS.Xperience.TransformableViews.Components
                     ViewCustomContent = properties.ViewCustomContent,
                     Items = items
                 };
+
+
                 return View(properties.View.FirstOrDefault()?.ObjectCodeName, viewModel);
             }
             return Content(string.Empty);
@@ -97,10 +110,10 @@ namespace HBS.Xperience.TransformableViews.Components
 
     public class TransformableViewContentWidgetProperties : IWidgetProperties
     {
-        [ObjectSelectorComponent(DataClassInfo.OBJECT_TYPE, WhereConditionProviderType = typeof(TransformableViewContentTypeWhere), OrderBy = ["ClassDisplayName"], Label = "Content Type")]
+        [ObjectSelectorComponent(DataClassInfo.OBJECT_TYPE, WhereConditionProviderType = typeof(TransformableViewContentTypeWhere), OrderBy = ["ClassDisplayName"], Label = "Content Type", IdentifyObjectByGuid = true)]
         public IEnumerable<ObjectRelatedItem> ContentType { get; set; } = [];
 
-        [ContentItemSelectorComponent(typeof(TransformableViewContentTypeFilter), Label = "Selected Content Items", Order = 1)]
+        [ContentItemSelectorComponent(typeof(TransformableViewContentTypeFilter), Label = "Selected Content Items", Order = 1, AllowContentItemCreation = false)]
         [VisibleIfNotEmpty(nameof(ContentType))]
         public IEnumerable<ContentItemReference> SelectedContent { get; set; } = [];
 
@@ -124,15 +137,35 @@ namespace HBS.Xperience.TransformableViews.Components
         {
             get
             {
-                var formFieldValueProvider = Service.ResolveOptional<IFormFieldValueProvider>();
-                if(formFieldValueProvider == null)
+                var httpContextAccessor = Service.ResolveOptional<IHttpContextAccessor>();
+                var form = httpContextAccessor.HttpContext?.Request.Form;
+                if(form != null)
                 {
-                    return [];
+                    if(!form.TryGetValue("command", out StringValues command))
+                    {
+                        return [];
+                    }
+                    if (!form.TryGetValue("data", out StringValues data))
+                    {
+                        return [];
+                    }
+                    try
+                    {
+                        var formData = JsonSerializer.Deserialize<TransformableViewContentWidgetPropertiesForm>(data, new JsonSerializerOptions
+                        {
+                            PropertyNameCaseInsensitive = true
+                        });
+
+                        var contentType = formData?.Form.ContentType.FirstOrDefault();
+                 
+                        return contentType != null && contentType.ObjectGuid.HasValue ? [contentType.ObjectGuid.Value] : [];
+                    }
+                    catch (Exception)
+                    {
+                        return [];
+                    }
                 }
-                formFieldValueProvider.TryGet(nameof(TransformableViewContentWidgetProperties.ContentType), out string contentTypeName);
-                var provider = DataClassInfoProvider.ProviderObject;
-                var contentItem = provider.Get().Columns(nameof(DataClassInfo.ClassGUID)).Select(x=>x.ClassGUID);
-                return contentItem;
+                return [];
             }
         }
     }
@@ -140,11 +173,18 @@ namespace HBS.Xperience.TransformableViews.Components
     public class TransformableViewContentTypeWhere : IObjectSelectorWhereConditionProvider
     {
         // Where condition limiting the objects
-        public WhereCondition Get() => new WhereCondition().WhereEquals(nameof(DataClassInfo.ClassType), "Content");
+        public WhereCondition Get() => new WhereCondition().WhereEquals(nameof(DataClassInfo.ClassType), "Content").WhereEquals(nameof(DataClassInfo.ClassContentTypeType), "Reusable");
     }
     public class TransformableViewWhere : IObjectSelectorWhereConditionProvider
     {
         // Where condition limiting the objects
         public WhereCondition Get() => new WhereCondition().WhereEquals(nameof(TransformableViewInfo.TransformableViewType), (int)TransformableViewTypeEnum.Transformable);
+    }
+
+    public class TransformableViewContentWidgetPropertiesForm
+    {
+        public TransformableViewContentWidgetProperties Form => FormData == null ? FieldValues : FormData;
+        public TransformableViewContentWidgetProperties FormData { get; set; }
+        public TransformableViewContentWidgetProperties FieldValues { get; set; }
     }
 }

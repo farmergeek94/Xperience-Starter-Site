@@ -33,6 +33,11 @@ namespace HBS.Xperience.TransformableViews.Repositories
         internal async Task<IEnumerable<string>> GetClassColumnNames(string className)
         {
             var type = await DataClassInfoProvider.ProviderObject.GetAsync(className);
+            return await GetClassColumnsNames(type);
+        }
+
+        internal async Task<IEnumerable<string>> GetClassColumnsNames(DataClassInfo? type)
+        {
             var form = new FormInfo(type.ClassFormDefinition);
             return form.GetColumnNames();
         }

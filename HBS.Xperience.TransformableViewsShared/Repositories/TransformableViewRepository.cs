@@ -46,7 +46,7 @@ namespace HBS.Xperience.TransformableViewsShared.Repositories
                         });
                 }
                 // use our own scope.
-                using var connection = new CMSConnectionScope();
+                using var connection = new CMSConnectionScope(true);
                 var view = _transformableViewInfoProvider.Get()
                 .Where(w => w.WhereEquals(nameof(TransformableViewInfo.TransformableViewName), viewName)).FirstOrDefault();
                 return view == null ? null : _encryptionService.DecryptView(view);
