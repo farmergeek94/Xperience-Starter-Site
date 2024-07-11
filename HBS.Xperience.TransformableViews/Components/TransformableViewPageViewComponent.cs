@@ -15,27 +15,25 @@ using System.Dynamic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Kentico.Xperience.Admin.Base.Forms;
+using HBS.Xperience.TransformableViews.Repositories;
 
 namespace HBS.Xperience.TransformableViews.Components
 {
-    public class TransformableViewPageViewComponent : ViewComponent
+    public class TransformableViewPageViewComponent(WebPageRetriever webPageRetriever) : ViewComponent
     {
-        private readonly IWebPageDataContextRetriever _contextRetriever;
-        private readonly IContentQueryExecutor _queryExecutor;
-        private readonly IWebsiteChannelContext _channelContext;
-
-        public TransformableViewPageViewComponent(IWebPageDataContextRetriever contextRetriever,
-            IContentQueryExecutor queryExecutor,
-            IWebsiteChannelContext channelContext,
-            IPreferredLanguageRetriever languageRetriever)
+        public async Task<IViewComponentResult> InvokeAsync(IEnumerable<ObjectRelatedItem> view)
         {
-            _contextRetriever = contextRetriever;
-            _queryExecutor = queryExecutor;
-            _channelContext = channelContext;
-        }
-        public IViewComponentResult Invoke(string view, dynamic model)
-        {
-            return View($"_TransformableView/{view}", model);
+            if (!view.Any())
+            {
+                return Content("Please select a view");
+            }
+            var model = await webPageRetriever.GetWebPage(User.Identity?.IsAuthenticated ?? false);
+            if (model == null)
+            {
+                return View(view.FirstOrDefault()?.ObjectCodeName);
+            }
+            return View(view.FirstOrDefault()?.ObjectCodeName, model);
         }
     }
 }

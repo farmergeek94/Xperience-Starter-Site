@@ -78,9 +78,9 @@ namespace HBS.Xperience.TransformableViewsShared.Repositories
             {
                 if (cs.Cached)
                 {
-                    cs.CacheDependency = CacheHelper.GetCacheDependency(new string[] {
+                    cs.CacheDependency = CacheHelper.GetCacheDependency([
                             $"{TransformableViewInfo.OBJECT_TYPE}|all"
-                        });
+                        ]);
                 }
                 return await _transformableViewInfoProvider.Get()
                 .Columns(nameof(TransformableViewInfo.TransformableViewName), nameof(TransformableViewInfo.TransformableViewDisplayName), nameof(TransformableViewInfo.TransformableViewType)).GetEnumerableTypedResultAsync();

@@ -40,15 +40,8 @@ namespace StarterSite.Logic.Repositories.Implementations
                 .WebPageType(Navitem.CONTENT_TYPE_NAME);
 
             var builder = new ContentItemQueryBuilder()
-                        .ForContentType(
-                            // Scopes the query to pages of the 'My.ArticlePage' content type
-                            Navitem.CONTENT_TYPE_NAME,
-                            config => config
-                                // Retrieves pages only from the specified channel
-                                .ForWebsite(channelName, PathMatch.Children(path))
-
-                        // Retrieves only English variants of pages
-                        ).InLanguage(language);
+                .ForContentType(Navitem.CONTENT_TYPE_NAME, config => config.ForWebsite(channel))
+                .InLanguage(language);
             // Executes the query and stores the data in generated 'ArticlePage' models
             IEnumerable<Navitem> pages = await _progressiveCache.LoadAsync(async cs =>
             {

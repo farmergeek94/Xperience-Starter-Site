@@ -28,7 +28,7 @@ namespace StarterSite.RCL
 
         private void RegisterPageTemplateFilters()
         {
-            PageBuilderFilters.PageTemplates.Add(new MainPageTemplateFilter());
+            //PageBuilderFilters.PageTemplates.Add(new MainPageTemplateFilter());
         }
     }
 }

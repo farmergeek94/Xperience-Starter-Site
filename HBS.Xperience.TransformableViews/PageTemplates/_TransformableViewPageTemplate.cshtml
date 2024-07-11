@@ -4,7 +4,7 @@
 @model TemplateViewModel<TransformableViewPageTemplateProperties>
 
 @{
-    var page = Model.GetTemplateModel<dynamic>();
+    var page = Model.GetTemplateModel<CMS.Websites.IWebPageFieldsSource>();
 }
 
 <vc:transformable-view-page view="@Model.Properties.View" model="page" />

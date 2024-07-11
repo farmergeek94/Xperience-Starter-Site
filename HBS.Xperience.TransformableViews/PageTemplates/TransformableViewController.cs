@@ -6,10 +6,12 @@ using HBS.TransformableViews_Experience;
 using HBS.Xperience.TransformableViews.PageTemplates;
 using HBS.Xperience.TransformableViews.Repositories;
 using HBS.Xperience.TransformableViewsShared.Library;
+using HotChocolate.Language;
 using Kentico.Content.Web.Mvc;
 using Kentico.Content.Web.Mvc.Routing;
 using Kentico.PageBuilder.Web.Mvc.PageTemplates;
 using Kentico.Xperience.Admin.Base.FormAnnotations;
+using Kentico.Xperience.Admin.Base.Forms;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualBasic;
 using System;
@@ -31,16 +33,16 @@ namespace HBS.Xperience.TransformableViews.PageTemplates
             _webPageRetriever = webPageRetriever;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return new TemplateResult(await _webPageRetriever.GetWebPage<T>(User.Identity?.IsAuthenticated ?? false));
+            return Content("Test");
         }
     }
 
     public class TransformableViewPageTemplateProperties : IPageTemplateProperties
     {
-        [ObjectSelectorComponent(TransformableViewInfo.OBJECT_TYPE, WhereConditionProviderType = typeof(TransformableViewPageWhere), OrderBy = new string[] { nameof(TransformableViewInfo.TransformableViewDisplayName) })]
-        public string View { get; set; } = string.Empty;
+        [ObjectSelectorComponent(TransformableViewInfo.OBJECT_TYPE, WhereConditionProviderType = typeof(TransformableViewPageWhere), OrderBy = [nameof(TransformableViewInfo.TransformableViewDisplayName)], MaximumItems = 1)]
+        public IEnumerable<ObjectRelatedItem> View { get; set; } = [];
     }
 
     internal class TransformableViewPageWhere : IObjectSelectorWhereConditionProvider

@@ -4,11 +4,11 @@ using Kentico.Xperience.Admin.Base.FormAnnotations;
 using StarterSite.RCL.Features.MainPageTemplate;
 using X;
 
-[assembly: RegisterPageTemplate(
-    "Generic.MainPage_Default",
-    "Main Page",
-    typeof(MainPagePageTemplateProperties),
-    "~/Features/MainPage/MainPagePageTemplate.cshtml")]
+//[assembly: RegisterPageTemplate(
+//    "Generic.MainPage_Default",
+//    "Main Page",
+//    typeof(MainPagePageTemplateProperties),
+//    "~/Features/MainPage/MainPagePageTemplate.cshtml")]
 
 namespace StarterSite.RCL.Features.MainPageTemplate
 {

@@ -29,7 +29,7 @@ namespace HBS.Xperience.TransformableViewsAdmin.Admin.FormComponents.Tranformabl
         [FormComponentCommand]
         public async Task<ICommandResponse> GetViews()
         {
-            IEnumerable<SelectListItem> views = await _transformableViewRepository.GetTransformableViewSelectItems();
+            IEnumerable<SelectListItem> views = await _transformableViewRepository.GetTransformableViewObjectSelectItems();
             return ResponseFrom(views);
         }
 

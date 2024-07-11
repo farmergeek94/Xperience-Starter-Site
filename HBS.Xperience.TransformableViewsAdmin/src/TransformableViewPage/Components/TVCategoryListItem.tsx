@@ -11,7 +11,6 @@ const CategoryListItem =  ({ category, level }: { category: TransformableViewCat
 
     return <TreeNode
         key={category.transformableViewCategoryName ?? ""}
-        hasChildren={(category.children?.length ?? 0) > 0}
         nodeIdentifier={category.transformableViewCategoryID?.toString() ?? ""}
         isDraggable={false}
         isToggleable={(category.children?.length ?? 0) > 0}

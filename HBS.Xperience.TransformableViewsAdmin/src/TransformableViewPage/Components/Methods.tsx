@@ -60,5 +60,6 @@ export const TVCategoryListContext = createContext<ITVCategoryListContext>({
     setCurrentCategory: (x?: ITransformableViewCategoryItem | null) => { },
     setDialog: (x: TVDialogAction) => { },
     dialogOptions: dialogDefaults,
-    tags: []
+    tags: [],
+    taxonomies: []
 });
