@@ -34,7 +34,7 @@ using System.Threading.Tasks;
 
 [assembly: RegisterWidget(
     identifier: TransformableViewContentWidgetViewComponent.Identifier,
-    customViewName: "~/Components/_TransformableViewContentWidget.cshtml",
+    customViewName: "~/Components/_TVContentWidget.cshtml",
     name: "Transformable View Widget",
     propertiesType: typeof(TransformableViewContentWidgetProperties),
     IconClass = "icon-braces-octothorpe")]
@@ -47,9 +47,9 @@ namespace HBS.Xperience.TransformableViews.Components
 
         private readonly ITransformableViewRepository _transformableViewRepository;
         private readonly IContentQueryExecutor _contentQueryExecutor;
-        private readonly WebPageRetriever _webPageRetriever;
+        private readonly ContentItemRetriever _webPageRetriever;
 
-        public TransformableViewContentWidgetViewComponent(ITransformableViewRepository transformableViewRepository, IContentQueryExecutor contentQueryExecutor, WebPageRetriever webPageRetriever)
+        public TransformableViewContentWidgetViewComponent(ITransformableViewRepository transformableViewRepository, IContentQueryExecutor contentQueryExecutor, ContentItemRetriever webPageRetriever)
         {
             _transformableViewRepository = transformableViewRepository;
             _contentQueryExecutor = contentQueryExecutor;
@@ -59,49 +59,15 @@ namespace HBS.Xperience.TransformableViews.Components
         {
             if (properties.ContentType.Any())
             {
-                var type = (await DataClassInfoProvider.ProviderObject.Get().WhereEquals(nameof(DataClassInfo.ClassGUID), properties.ContentType.First().ObjectGuid).GetEnumerableTypedResultAsync()).FirstOrDefault();
-                var columNames = await _webPageRetriever.GetClassColumnsNames(type);
-
-                // Builds the query - the content type must match the one configured for the selector
-                var query = new ContentItemQueryBuilder()
-                                .ForContentType(type.ClassName,
-                                      config => config
-                                        .Where(where =>
-                                        where
-                                                .WhereIn(nameof(IContentQueryDataContainer.ContentItemGUID), properties.SelectedContent.Select(x => x.Identifier).ToList())
-                                        ));
-
-                IEnumerable<ExpandoObject> items = (await _contentQueryExecutor.GetResult(query, map =>
-                {
-                    var eOb = new ExpandoObject() as IDictionary<string, object?>;
-                    eOb.Add(nameof(map.ContentItemID), map.ContentItemID);
-                    eOb.Add(nameof(map.ContentItemContentTypeID), map.ContentItemContentTypeID);
-                    eOb.Add(nameof(map.ContentItemGUID), map.ContentItemGUID);
-                    eOb.Add(nameof(map.ContentItemCommonDataContentLanguageID), map.ContentItemCommonDataContentLanguageID);
-                    eOb.Add(nameof(map.ContentItemName), map.ContentItemName);
-                    foreach (var columnName in columNames)
-                    {
-                        if (eOb.ContainsKey(columnName))
-                        {
-                            continue;
-                        }
-                        if(map.TryGetValue(columnName, out dynamic value))
-                        {
-                            eOb.Add(columnName, value);
-                        }
-                    }
-                    return (ExpandoObject)eOb; 
-                })).ToArray();
-
                 var viewModel = new TransformableViewModel()
                 {
                     ViewTitle = properties.ViewTitle,
                     ViewClassNames = properties.ViewClassNames,
                     ViewCustomContent = properties.ViewCustomContent,
-                    Items = items
+                    Items = await _webPageRetriever.GetContentItems(properties.ContentType.First().ObjectGuid, properties.SelectedContent.Select(x => x.Identifier))
                 };
 
-
+                // Return the database view with the model. 
                 return View(properties.View.FirstOrDefault()?.ObjectCodeName, viewModel);
             }
             return Content(string.Empty);
@@ -113,7 +79,7 @@ namespace HBS.Xperience.TransformableViews.Components
         [ObjectSelectorComponent(DataClassInfo.OBJECT_TYPE, WhereConditionProviderType = typeof(TransformableViewContentTypeWhere), OrderBy = ["ClassDisplayName"], Label = "Content Type", IdentifyObjectByGuid = true)]
         public IEnumerable<ObjectRelatedItem> ContentType { get; set; } = [];
 
-        [ContentItemSelectorComponent(typeof(TransformableViewContentTypeFilter), Label = "Selected Content Items", Order = 1, AllowContentItemCreation = false)]
+        [ContentItemSelectorComponent(typeof(TransformableViewContentTypeFilter), Label = "Selected Content Items", Order = 1, AllowContentItemCreation = false, MinimumItems = 1)]
         [VisibleIfNotEmpty(nameof(ContentType))]
         public IEnumerable<ContentItemReference> SelectedContent { get; set; } = [];
 
@@ -139,30 +105,33 @@ namespace HBS.Xperience.TransformableViews.Components
             {
                 var httpContextAccessor = Service.ResolveOptional<IHttpContextAccessor>();
                 var form = httpContextAccessor.HttpContext?.Request.Form;
-                if(form != null)
+                if (form != null)
                 {
-                    if(!form.TryGetValue("command", out StringValues command))
+                    if (form.TryGetValue("command", out StringValues command))
                     {
-                        return [];
-                    }
-                    if (!form.TryGetValue("data", out StringValues data))
-                    {
-                        return [];
-                    }
-                    try
-                    {
-                        var formData = JsonSerializer.Deserialize<TransformableViewContentWidgetPropertiesForm>(data, new JsonSerializerOptions
+                        // Get the form data passed back to the filter. 
+                        if (form.TryGetValue("data", out StringValues data))
                         {
-                            PropertyNameCaseInsensitive = true
-                        });
+                            try
+                            {
+                                var formData = JsonSerializer.Deserialize<TransformableViewContentWidgetPropertiesForm>(data, new JsonSerializerOptions
+                                {
+                                    PropertyNameCaseInsensitive = true
+                                });
 
-                        var contentType = formData?.Form.ContentType.FirstOrDefault();
-                 
-                        return contentType != null && contentType.ObjectGuid.HasValue ? [contentType.ObjectGuid.Value] : [];
-                    }
-                    catch (Exception)
-                    {
-                        return [];
+                                if (formData?.Form != null)
+                                {
+                                    // Get the content type value for filtering.
+                                    var contentType = formData?.Form.ContentType.FirstOrDefault();
+
+                                    return contentType != null && contentType.ObjectGuid.HasValue ? [contentType.ObjectGuid.Value] : [];
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                return [];
+                            }
+                        }
                     }
                 }
                 return [];
@@ -172,15 +141,19 @@ namespace HBS.Xperience.TransformableViews.Components
 
     public class TransformableViewContentTypeWhere : IObjectSelectorWhereConditionProvider
     {
-        // Where condition limiting the objects
+        // Where condition limiting the content type to only reuasble content types
         public WhereCondition Get() => new WhereCondition().WhereEquals(nameof(DataClassInfo.ClassType), "Content").WhereEquals(nameof(DataClassInfo.ClassContentTypeType), "Reusable");
     }
+
     public class TransformableViewWhere : IObjectSelectorWhereConditionProvider
     {
-        // Where condition limiting the objects
+        // Where Limiting the View type to transformable.
         public WhereCondition Get() => new WhereCondition().WhereEquals(nameof(TransformableViewInfo.TransformableViewType), (int)TransformableViewTypeEnum.Transformable);
     }
 
+    /// <summary>
+    /// Class wrapper around the FormData field passed back in request.
+    /// </summary>
     public class TransformableViewContentWidgetPropertiesForm
     {
         public TransformableViewContentWidgetProperties Form => FormData == null ? FieldValues : FormData;

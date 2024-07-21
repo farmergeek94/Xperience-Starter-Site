@@ -1,0 +1,23 @@
+﻿@using Kentico.PageBuilder.Web.Mvc
+@using Kentico.Web.Mvc
+@using HBS.Xperience.TransformableViews.Components
+@addTagHelper *, HBS.Xperience.TransformableViews
+@model ComponentViewModel<TransformableViewContentWidgetProperties>
+
+@{  
+    try
+    {
+        <vc:transformable-view-content-widget properties="Model.Properties"></vc:transformable-view-content-widget>
+    }
+    catch (Exception ex)
+    {
+        if (Context.Kentico().PageBuilder().EditMode)
+        {
+            <div>@ex.Message</div>
+        }
+        else
+        {
+            <div>There was an error displaying the view</div>
+        }
+    }
+}

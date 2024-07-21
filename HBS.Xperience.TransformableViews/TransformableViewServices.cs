@@ -8,8 +8,8 @@ namespace HBS.Xperience.TransformableViews
     {
         public static IMvcBuilder UseTransformableViewsProvider(this IMvcBuilder builder)
         {
-            builder.AddRazorRuntimeCompilation(cs => cs.FileProviders.Add(new TransformableViewFileProvider()));
-            builder.Services.AddSingleton<WebPageRetriever>();
+            builder.AddRazorRuntimeCompilation(cs => cs.FileProviders.Insert(0, new TransformableViewFileProvider()));
+            builder.Services.AddSingleton<ContentItemRetriever>();
             return builder;
         }
     }

@@ -60,7 +60,7 @@ namespace Xperience.Community.TransformableViews.Models
 @using Kentico.PageBuilder.Web.Mvc
 @using Kentico.Web.Mvc
 ";
-            if (viewPath.IndexOf("TransformableView") > -1)
+            if (viewPath.IndexOf("TransformableView") > -1 && viewPath.IndexOf("_ViewImports") < 0)
             {
                 var viewName = Path.GetFileName(viewPath).Replace(".cshtml","");
 

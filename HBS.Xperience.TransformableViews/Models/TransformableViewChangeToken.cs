@@ -32,7 +32,7 @@ namespace HBS.Xperience.TransformableViews.Models
             {
                 try
                 {
-                    if (_filter.IndexOf("TransformableView") > -1)
+                    if (_filter.IndexOf("TransformableView") > -1 && _filter.IndexOf("_ViewImports") < 0)
                     {
                         var viewName = Path.GetFileName(_filter).Replace(".cshtml", "");
                         var view = _repository.GetTransformableView(viewName);

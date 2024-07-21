@@ -15,6 +15,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -38,17 +39,17 @@ namespace HBS.Xperience.TransformableViewsShared.Repositories
         public ITransformableViewItem? GetTransformableView(string viewName, bool update = false)
         {
             var view = _progressiveCache.Load(cs =>
-            {
+            {                
+                // use our own scope.
+                using var connection = new CMSConnectionScope(true);
+                var view = _transformableViewInfoProvider.Get().Where(w => w.WhereEquals(nameof(TransformableViewInfo.TransformableViewName), viewName)).ToArray().FirstOrDefault();
+
                 if (cs.Cached)
                 {
                     cs.CacheDependency = CacheHelper.GetCacheDependency(new string[] {
-                            $"{TransformableViewInfo.OBJECT_TYPE}|all"
+                            view == null ? $"{TransformableViewInfo.OBJECT_TYPE}|all" : $"{TransformableViewInfo.OBJECT_TYPE}|byid|{view?.TransformableViewID}"
                         });
                 }
-                // use our own scope.
-                using var connection = new CMSConnectionScope(true);
-                var view = _transformableViewInfoProvider.Get()
-                .Where(w => w.WhereEquals(nameof(TransformableViewInfo.TransformableViewName), viewName)).FirstOrDefault();
                 return view == null ? null : _encryptionService.DecryptView(view);
             }, new CacheSettings(86400, "GetTransformableViewInfo", viewName));
 
@@ -116,7 +117,22 @@ namespace HBS.Xperience.TransformableViewsShared.Repositories
                 var expando = new ExpandoObject() as IDictionary<String, Object>;
                 foreach (var column in columns)
                 {
-                    expando.Add(column, item[column]);
+                    var value = item[column];
+                    if (value.GetType() == typeof(string))
+                    {
+                        try
+                        {
+                            var parsed = JsonSerializer.Deserialize<ExpandoObject>((string)value);
+                            expando.Add(column, parsed);
+                        }
+                        catch
+                        {
+                            expando.Add(column, value);
+                        }
+                    } else
+                    {
+                        expando.Add(column, value);
+                    }
                 }
                 expendables.Add(expando);
             };

@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 [assembly: RegisterWidget(
     identifier: TransformableViewObjectsWidgetViewComponent.Identifier,
-    customViewName: "~/Components/_TransformableViewObjects.cshtml",
+    customViewName: "~/Components/_TVObjects.cshtml",
     name: "Transformable View Objects",
     propertiesType: typeof(TransformableViewObjectsWidgetProperties),
     IconClass = "icon-layout")]
@@ -40,7 +40,7 @@ namespace HBS.Xperience.TransformableViews.Components
                     ViewTitle = model.ViewTitle,
                     ViewClassNames = model.ViewClassNames,
                     ViewCustomContent = model.ViewCustomContent,
-                    Items = items
+                    Items = items.ToArray()
                 };
                 return View(model.View, viewModel);
                 //return Content(string.Empty);

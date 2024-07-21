@@ -8,6 +8,6 @@ namespace HBS.Xperience.TransformableViewsShared.Models
 {
     public class TransformableViewModel : TransformableViewModelBase
     {
-        public IEnumerable<dynamic> Items { get; set; } = Enumerable.Empty<dynamic>();
+        public dynamic Items { get; set; } = Enumerable.Empty<dynamic>();
     }
 }

@@ -20,25 +20,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-[assembly: RegisterPageTemplate("HBS.TransformableViewPageTemplate", "Transformable View Template", typeof(TransformableViewPageTemplateProperties), "~/PageTemplates/_TransformableViewPageTemplate.cshtml", Description = "Page Template for using the transformable views")]
+[assembly: RegisterPageTemplate("HBS.TransformableViewPageTemplate", "Transformable View Template", typeof(TransformableViewPageTemplateProperties), "~/PageTemplates/_TVPageTemplate.cshtml", Description = "Page Template for using the transformable views")]
 
 namespace HBS.Xperience.TransformableViews.PageTemplates
 {
-    public class TransformableViewController<T> : Controller where T : class, IWebPageFieldsSource
-    {
-        private readonly WebPageRetriever _webPageRetriever;
-
-        public TransformableViewController(WebPageRetriever webPageRetriever)
-        {
-            _webPageRetriever = webPageRetriever;
-        }
-
-        public IActionResult Index()
-        {
-            return Content("Test");
-        }
-    }
-
     public class TransformableViewPageTemplateProperties : IPageTemplateProperties
     {
         [ObjectSelectorComponent(TransformableViewInfo.OBJECT_TYPE, WhereConditionProviderType = typeof(TransformableViewPageWhere), OrderBy = [nameof(TransformableViewInfo.TransformableViewDisplayName)], MaximumItems = 1)]

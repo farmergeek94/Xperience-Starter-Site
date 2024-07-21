@@ -20,15 +20,22 @@ using HBS.Xperience.TransformableViews.Repositories;
 
 namespace HBS.Xperience.TransformableViews.Components
 {
-    public class TransformableViewPageViewComponent(WebPageRetriever webPageRetriever) : ViewComponent
+    public class TransformableViewPageViewComponent : ViewComponent
     {
+        private readonly ContentItemRetriever _webPageRetriever;
+
+        public TransformableViewPageViewComponent (ContentItemRetriever webPageRetriever)
+        {
+            _webPageRetriever = webPageRetriever;
+        }
+
         public async Task<IViewComponentResult> InvokeAsync(IEnumerable<ObjectRelatedItem> view)
         {
             if (!view.Any())
             {
                 return Content("Please select a view");
             }
-            var model = await webPageRetriever.GetWebPage(User.Identity?.IsAuthenticated ?? false);
+            var model = await _webPageRetriever.GetWebPage(User.Identity?.IsAuthenticated ?? false);
             if (model == null)
             {
                 return View(view.FirstOrDefault()?.ObjectCodeName);
