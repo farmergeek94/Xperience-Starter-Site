@@ -1,6 +1,12 @@
 ﻿import React, { useContext, useEffect, useState } from 'react'
+import { usePageCommand } from '@kentico/xperience-admin-base';
 import { CodeEditor, CodeEditorLanguage, Dialog, Input, MenuItem, Select, TextWithLabel } from '@kentico/xperience-admin-components';
 import TransformableViewItem from '../../Shared/TransformableViewItem';
+
+interface TVClassItem {
+    classDisplayName: string
+    className: string
+}
 
 export interface ViewDialogOptions {
     selectedView?: TransformableViewItem
@@ -12,7 +18,13 @@ export interface ViewDialogOptions {
 export default ({ selectedView, setViewsCommand, open, closeDialog }: ViewDialogOptions) => {
     const [displayName, setDisplayName] = useState(selectedView?.transformableViewDisplayName);
     const [transformableViewType, setTransformableViewType] = useState(selectedView?.transformableViewType);
+    const [transformableViewClassName, setTransformableViewClassName] = useState(selectedView?.transformableViewClassName);
     const [content, setContent] = useState(selectedView?.transformableViewContent);
+    const [classNames, setClassNames] = useState<TVClassItem[]>([]);
+
+    useEffect(() => {
+        getClassNames();
+    }, []);
 
     const handleCancel = () => {
         closeDialog();
@@ -23,6 +35,14 @@ export default ({ selectedView, setViewsCommand, open, closeDialog }: ViewDialog
         closeDialog();
     }
 
+    const {execute: getClassNames } = usePageCommand<TVClassItem[]>("GetClassNames", {
+        after: (response) => {
+            if (response) {
+                setClassNames(response);
+            }
+        }
+    });
+
     return <Dialog isOpen={open} headline={"Edit View"} onClose={handleCancel} isDismissable={true} headerCloseButton={{ tooltipText: "Close Dialog" }} confirmAction={{ label: "Okay", onClick: handleConfirm }} cancelAction={{ label: "Cancel", onClick: handleCancel }}>
         <div style={{paddingBottom: 20}}>
             <Input label="Display Name" value={displayName} onChange={(e) => setDisplayName(e.currentTarget.value)} />
@@ -32,10 +52,16 @@ export default ({ selectedView, setViewsCommand, open, closeDialog }: ViewDialog
         </div>
         <div style={{ paddingBottom: 20 }}>
             <Select value={transformableViewType?.toString()} onChange={(val) => selectedView && setTransformableViewType(Number(val)) }>
+                <MenuItem value={"3"} primaryLabel="Transformable" />
                 <MenuItem value={"0"} primaryLabel="Layout" />
                 <MenuItem value={"1"} primaryLabel="Page" />
                 <MenuItem value={"2"} primaryLabel="Listing" />
-                <MenuItem value={"3"} primaryLabel="Transformable" />
+            </Select>
+        </div>
+        <div style={{ paddingBottom: 20 }}>
+            <Select value={transformableViewClassName?.toString()} onChange={(val) => selectedView && setTransformableViewClassName(val)} markAsRequired={true}>
+                <MenuItem value={""} primaryLabel={"(Select a Class)"} />
+                {classNames.map(x => <MenuItem key={x.className} value={x.className} primaryLabel={x.classDisplayName } />) }
             </Select>
         </div>
         <div>

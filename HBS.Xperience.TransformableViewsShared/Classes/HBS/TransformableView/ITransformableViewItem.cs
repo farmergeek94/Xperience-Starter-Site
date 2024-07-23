@@ -10,6 +10,6 @@
         string TransformableViewName { get; set; }
         int TransformableViewTransformableViewTagID { get; set; }
         int TransformableViewType { get; set; }
-        string TransformableViewForm { get; set; }
+        string TransformableViewClassName { get; set; }
     }
 }

@@ -28,8 +28,7 @@ namespace HBS.Xperience.TransformableViews.Repositories
         private readonly IProgressiveCache _progressiveCache;
         private readonly ICacheService _cacheService;
 
-        internal ContentItemRetriever(IWebPageDataContextRetriever contextRetriever,
-            IContentQueryExecutor queryExecutor, IWebsiteChannelContext channelContext, IProgressiveCache progressiveCache, ICacheService cacheService)
+        public ContentItemRetriever(IWebPageDataContextRetriever contextRetriever, IContentQueryExecutor queryExecutor, IWebsiteChannelContext channelContext, IProgressiveCache progressiveCache, ICacheService cacheService)
         {
             _contextRetriever = contextRetriever;
             _queryExecutor = queryExecutor;

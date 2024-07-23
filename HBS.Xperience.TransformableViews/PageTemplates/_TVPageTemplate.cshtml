@@ -3,12 +3,16 @@
 @using Kentico.PageBuilder.Web.Mvc
 @using HBS.Xperience.TransformableViews.PageTemplates
 @addTagHelper *, HBS.Xperience.TransformableViews
+@inject HBS.Xperience.TransformableViewsShared.Services.ICacheService CacheService
 @model TemplateViewModel<TransformableViewPageTemplateProperties>
 
 @{
     try
     {
-        <vc:transformable-view-page view="Model.Properties.View"></vc:transformable-view-page>
+        <cache priority="Microsoft.Extensions.Caching.Memory.CacheItemPriority.High" expires-sliding="@TimeSpan.FromMinutes(30)" vary-by-user="true">
+            <cache-dependency cache-keys="@CacheService.GetDependenciesList()" />
+            <vc:transformable-view-page view="Model.Properties.View"></vc:transformable-view-page>
+        </cache>
     }
     catch (Exception ex)
     {

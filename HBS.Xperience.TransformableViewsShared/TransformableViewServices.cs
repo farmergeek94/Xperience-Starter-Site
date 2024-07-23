@@ -8,9 +8,9 @@ namespace HBS.Xperience.TransformableViewsShared
     {
         public static IMvcBuilder WithTransformableViews(this IMvcBuilder builder, string aesKey)
         {
-            builder.Services.AddSingleton<ITransformableViewRepository, TransformableViewRepository>();
             builder.Services.AddSingleton<IEncryptionService>(new EncryptionService(aesKey));
             builder.Services.AddScoped<ICacheService, CacheService>();
+            builder.Services.AddSingleton<ITransformableViewRepository, TransformableViewRepository>();
 
             return builder;
         }

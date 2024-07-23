@@ -106,6 +106,17 @@ namespace HBS.TransformableViews_Experience
 
 
         /// <summary>
+        /// Transformable view class name.
+        /// </summary>
+        [DatabaseField]
+        public virtual string TransformableViewClassName
+        {
+            get => ValidationHelper.GetString(GetValue(nameof(TransformableViewClassName)), String.Empty);
+            set => SetValue(nameof(TransformableViewClassName), value);
+        }
+
+
+        /// <summary>
         /// Transformable view guid.
         /// </summary>
         [DatabaseField]
@@ -113,17 +124,6 @@ namespace HBS.TransformableViews_Experience
         {
             get => ValidationHelper.GetGuid(GetValue(nameof(TransformableViewGuid)), Guid.Empty);
             set => SetValue(nameof(TransformableViewGuid), value);
-        }
-
-
-        /// <summary>
-        /// Transformable view form.
-        /// </summary>
-        [DatabaseField]
-        public virtual string TransformableViewForm
-        {
-            get => ValidationHelper.GetString(GetValue(nameof(TransformableViewForm)), String.Empty);
-            set => SetValue(nameof(TransformableViewForm), value);
         }
 
 

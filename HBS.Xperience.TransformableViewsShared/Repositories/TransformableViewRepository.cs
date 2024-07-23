@@ -21,19 +21,17 @@ using System.Threading.Tasks;
 
 namespace HBS.Xperience.TransformableViewsShared.Repositories
 {
-    internal class TransformableViewRepository : ITransformableViewRepository
+    public class TransformableViewRepository : ITransformableViewRepository
     {
         private readonly IProgressiveCache _progressiveCache;
         private readonly ITransformableViewInfoProvider _transformableViewInfoProvider;
         private readonly IEncryptionService _encryptionService;
-        private readonly ICacheService _cacheService;
 
-        public TransformableViewRepository(IProgressiveCache progressiveCache, ITransformableViewInfoProvider transformableViewInfoProvider, IEncryptionService encryptionService, ICacheService cacheService)
+        public TransformableViewRepository(IProgressiveCache progressiveCache, ITransformableViewInfoProvider transformableViewInfoProvider, IEncryptionService encryptionService)
         {
             _progressiveCache = progressiveCache;
             _transformableViewInfoProvider = transformableViewInfoProvider;
             _encryptionService = encryptionService;
-            _cacheService = cacheService;
         }
 
         public Dictionary<string, DateTime> LastViewedDates { get; set; } = new Dictionary<string, DateTime>();
@@ -46,7 +44,7 @@ namespace HBS.Xperience.TransformableViewsShared.Repositories
 
                 if (cs.Cached)
                 {
-                    cs.CacheDependency = _cacheService.GetCacheDependencies(new string[] {
+                    cs.CacheDependency = CacheHelper.GetCacheDependency(new string[] {
                         view == null ? $"{TransformableViewInfo.OBJECT_TYPE}|all" : $"{TransformableViewInfo.OBJECT_TYPE}|byid|{view?.TransformableViewID}"
                     });
                 }
@@ -79,7 +77,7 @@ namespace HBS.Xperience.TransformableViewsShared.Repositories
             {
                 if (cs.Cached)
                 {
-                    cs.CacheDependency = _cacheService.GetCacheDependencies([
+                    cs.CacheDependency = CacheHelper.GetCacheDependency([
                             $"{TransformableViewInfo.OBJECT_TYPE}|all"
                         ]);
                 }

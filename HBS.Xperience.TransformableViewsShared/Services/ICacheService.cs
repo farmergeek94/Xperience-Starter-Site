@@ -7,6 +7,6 @@ namespace HBS.Xperience.TransformableViewsShared.Services
         ICacheService Add(IEnumerable<string> keys);
         CMSCacheDependency GetCacheDependencies(IEnumerable<string> keys);
         CMSCacheDependency GetCacheDependencies(string key);
-        IEnumerable<string> GetDependenciesList();
+        string[] GetDependenciesList();
     }
 }

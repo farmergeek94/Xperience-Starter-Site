@@ -1,4 +1,5 @@
 ﻿using CMS.Helpers;
+using HBS.TransformableViews_Experience;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,16 +10,21 @@ namespace HBS.Xperience.TransformableViewsShared.Services
 {
     internal class CacheService : ICacheService
     {
-        List<string> _keys = new List<string>();
+        public CacheService() { 
+        }
+        List<string> _keys = new List<string>()
+        {
+            $"{TransformableViewInfo.OBJECT_TYPE}|all"
+        };
         public ICacheService Add(IEnumerable<string> keys)
         {
             _keys.AddRange(keys);
             return this;
         }
 
-        public IEnumerable<string> GetDependenciesList()
+        public string[] GetDependenciesList()
         {
-            return _keys;
+            return _keys.ToArray();
         }
 
         public CMSCacheDependency GetCacheDependencies(string key)

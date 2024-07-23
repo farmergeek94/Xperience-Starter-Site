@@ -2,6 +2,7 @@
 using HBS.TransformableViews;
 using HBS.Xperience.TransformableViews.Models;
 using HBS.Xperience.TransformableViewsShared.Models;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Primitives;
 using System;
@@ -15,6 +16,11 @@ namespace HBS.Xperience.TransformableViews.Repositories
 {
     internal class TransformableViewFileProvider : IFileProvider
     {
+        private readonly IServiceProvider _serviceProvider;
+
+        public TransformableViewFileProvider(IServiceProvider serviceProvider) {
+            _serviceProvider = serviceProvider;
+        }
         public IDirectoryContents GetDirectoryContents(string subpath)
         {
             return null;
@@ -22,7 +28,7 @@ namespace HBS.Xperience.TransformableViews.Repositories
 
         public IFileInfo GetFileInfo(string subpath)
         {
-            return new TransformableViewFile(subpath);
+            return new TransformableViewFile(_serviceProvider, subpath);
         }
 
         public IChangeToken Watch(string filter)

@@ -3,6 +3,7 @@ using CMS.Helpers;
 using HBS.TransformableViews;
 using HBS.Xperience.TransformableViewsShared.Repositories;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using System;
 using System.Collections.Generic;
@@ -15,16 +16,16 @@ namespace Xperience.Community.TransformableViews.Models
 {
     internal class TransformableViewFile : IFileInfo
     {
+        private readonly IServiceProvider _serviceProvider;
         private string _viewPath = "";
-
-        private ITransformableViewRepository _repository => Service.Resolve<ITransformableViewRepository>();
 
         private byte[] _viewContent = Array.Empty<byte>();
         private DateTimeOffset _lastModified = DateTime.MinValue;
         private bool _exists = false;
 
-        public TransformableViewFile(string viewName)
+        public TransformableViewFile(IServiceProvider serviceProvider, string viewName)
         {
+            _serviceProvider = serviceProvider;
             _viewPath = viewName;
             GetView(viewName);
         }
@@ -66,7 +67,8 @@ namespace Xperience.Community.TransformableViews.Models
 
                 try
                 {
-                    var view = _repository.GetTransformableView(viewName, true);
+                    var serviceRepo = _serviceProvider.GetRequiredService<ITransformableViewRepository>();
+                    var view = serviceRepo.GetTransformableView(viewName, true);
                     if (view != null)
                     {
                         _viewContent = Encoding.UTF8.GetBytes(usings + view.TransformableViewContent);

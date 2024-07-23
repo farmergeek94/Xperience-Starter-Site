@@ -13,5 +13,6 @@ namespace HBS.Xperience.TransformableViewsAdmin.Admin.Models
         public string? TransformableViewName { get; set; }
         public int TransformableViewTransformableViewCategoryID { get; set; }
         public int TransformableViewType { get; set; } = 0;
+        public string TransformableViewClassName { get; set; }
     }
 }

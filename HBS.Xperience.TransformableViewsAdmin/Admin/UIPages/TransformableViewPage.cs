@@ -68,6 +68,7 @@ namespace HBS.Xperience.TransformableViewsAdmin.Admin.UIPages
                     view.TransformableViewDisplayName = model.TransformableViewDisplayName;
                     view.TransformableViewContent = model.TransformableViewContent;
                     view.TransformableViewType = model.TransformableViewType;
+                    view.TransformableViewClassName = model.TransformableViewClassName;
                     _transformableViewInfoProvider.Set(view);
                     return ResponseFrom((ITransformableViewItem)view).AddSuccessMessage("View saved");
                 }
@@ -81,6 +82,7 @@ namespace HBS.Xperience.TransformableViewsAdmin.Admin.UIPages
                     TransformableViewName = ValidationHelper.GetCodeName(model.TransformableViewDisplayName),
                     TransformableViewTransformableViewTagID = model.TransformableViewTransformableViewCategoryID,
                     TransformableViewType = model.TransformableViewType,
+                    TransformableViewClassName = model.TransformableViewClassName
                 };
 
                 // Add guid if it fails.
@@ -92,11 +94,18 @@ namespace HBS.Xperience.TransformableViewsAdmin.Admin.UIPages
                 {
                     view.TransformableViewName = view.TransformableViewName + "_" + Guid.NewGuid().ToString();
                     // reset the content to avoid double encryption.  
-                    view.TransformableViewContent = view.TransformableViewContent;
+                    view.TransformableViewContent = model.TransformableViewContent;
                     _transformableViewInfoProvider.Set(view);
                 }
                 return ResponseFrom((ITransformableViewItem)view).AddSuccessMessage("View creaeted");
             }
+        }
+
+        [PageCommand]
+        public async Task<ICommandResponse> GetClassNames()
+        {
+            var classNames = (await DataClassInfoProvider.GetClasses().Columns(nameof(DataClassInfo.ClassName), nameof(DataClassInfo.ClassDisplayName)).GetEnumerableTypedResultAsync()).Select(x=> new { x.ClassName, x.ClassDisplayName });
+            return ResponseFrom(new { classNames });
         }
 
         [PageCommand]
@@ -115,6 +124,7 @@ namespace HBS.Xperience.TransformableViewsAdmin.Admin.UIPages
                     view.TransformableViewDisplayName = viewModel.TransformableViewDisplayName;
                     view.TransformableViewContent = viewModel.TransformableViewContent;
                     view.TransformableViewType = viewModel.TransformableViewType;
+                    view.TransformableViewClassName = viewModel.TransformableViewClassName;
                     _transformableViewInfoProvider.Set(view);
                     viewList.Add(view);
                 }
@@ -156,6 +166,7 @@ namespace HBS.Xperience.TransformableViewsAdmin.Admin.UIPages
                     TransformableViewName = item.TransformableViewName,
                     TransformableViewTransformableViewCategoryID = item.TransformableViewTransformableViewTagID,
                     TransformableViewType = item.TransformableViewType,
+                    TransformableViewClassName = item.TransformableViewClassName
                 };
                 yield return nItem;
             }
