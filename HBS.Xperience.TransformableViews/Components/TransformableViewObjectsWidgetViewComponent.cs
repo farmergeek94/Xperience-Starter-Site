@@ -1,4 +1,5 @@
 ﻿using HBS.Xperience.TransformableViews.Components;
+using HBS.Xperience.TransformableViews.Repositories;
 using HBS.Xperience.TransformableViewsShared.Library;
 using HBS.Xperience.TransformableViewsShared.Models;
 using HBS.Xperience.TransformableViewsShared.Repositories;
@@ -23,17 +24,17 @@ namespace HBS.Xperience.TransformableViews.Components
     public class TransformableViewObjectsWidgetViewComponent : ViewComponent
     {
         public const string Identifier = "HBS.TransformableViewObjects";
-        private readonly ITransformableViewRepository _transformableViewRepository;
+        private readonly IContentItemRetriever _contentItemRetriever;
 
-        public TransformableViewObjectsWidgetViewComponent(ITransformableViewRepository transformableViewRepository)
+        public TransformableViewObjectsWidgetViewComponent(IContentItemRetriever contentItemRetriever)
         {
-            _transformableViewRepository = transformableViewRepository;
+            _contentItemRetriever = contentItemRetriever;
         }
         public async Task<IViewComponentResult> InvokeAsync(TransformableViewObjectsFormComponentModel model)
         {
             if (!string.IsNullOrWhiteSpace(model.ClassName))
             {
-                var items = await _transformableViewRepository.GetObjectItems(model);
+                var items = await _contentItemRetriever.GetObjectItems(model);
 
                 var viewModel = new TransformableViewModel()
                 {

@@ -22,9 +22,9 @@ namespace HBS.Xperience.TransformableViews.Components
 {
     public class TransformableViewPageViewComponent : ViewComponent
     {
-        private readonly ContentItemRetriever _webPageRetriever;
+        private readonly IContentItemRetriever _webPageRetriever;
 
-        public TransformableViewPageViewComponent (ContentItemRetriever webPageRetriever)
+        public TransformableViewPageViewComponent (IContentItemRetriever webPageRetriever)
         {
             _webPageRetriever = webPageRetriever;
         }

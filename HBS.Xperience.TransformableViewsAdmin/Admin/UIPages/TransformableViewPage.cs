@@ -60,7 +60,6 @@ namespace HBS.Xperience.TransformableViewsAdmin.Admin.UIPages
         [PageCommand]
         public async Task<ICommandResponse> SetView(TransformableViewItem model)
         {
-            using var connection = new CMSConnectionScope();
             if (model.TransformableViewID != null)
             {
                 TransformableViewInfo view = await _transformableViewInfoProvider.GetAsync(model.TransformableViewID.Value);

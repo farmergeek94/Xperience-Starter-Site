@@ -47,9 +47,9 @@ namespace HBS.Xperience.TransformableViews.Components
 
         private readonly ITransformableViewRepository _transformableViewRepository;
         private readonly IContentQueryExecutor _contentQueryExecutor;
-        private readonly ContentItemRetriever _webPageRetriever;
+        private readonly IContentItemRetriever _webPageRetriever;
 
-        public TransformableViewContentWidgetViewComponent(ITransformableViewRepository transformableViewRepository, IContentQueryExecutor contentQueryExecutor, ContentItemRetriever webPageRetriever)
+        public TransformableViewContentWidgetViewComponent(ITransformableViewRepository transformableViewRepository, IContentQueryExecutor contentQueryExecutor, IContentItemRetriever webPageRetriever)
         {
             _transformableViewRepository = transformableViewRepository;
             _contentQueryExecutor = contentQueryExecutor;

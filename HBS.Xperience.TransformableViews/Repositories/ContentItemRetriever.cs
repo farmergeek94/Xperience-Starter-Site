@@ -14,21 +14,28 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using HBS.Xperience.TransformableViewsShared.Services;
+using HBS.Xperience.TransformableViewsShared.Models;
+using System.Data;
 
 namespace HBS.Xperience.TransformableViews.Repositories
 {
-    public class ContentItemRetriever
+    internal class ContentItemRetriever : IContentItemRetriever
     {
         private readonly IWebPageDataContextRetriever _contextRetriever;
         private readonly IContentQueryExecutor _queryExecutor;
         private readonly IWebsiteChannelContext _channelContext;
+        private readonly IProgressiveCache _progressiveCache;
+        private readonly ICacheService _cacheService;
 
-        public ContentItemRetriever(IWebPageDataContextRetriever contextRetriever,
-            IContentQueryExecutor queryExecutor, IWebsiteChannelContext channelContext)
+        internal ContentItemRetriever(IWebPageDataContextRetriever contextRetriever,
+            IContentQueryExecutor queryExecutor, IWebsiteChannelContext channelContext, IProgressiveCache progressiveCache, ICacheService cacheService)
         {
             _contextRetriever = contextRetriever;
             _queryExecutor = queryExecutor;
             _channelContext = channelContext;
+            _progressiveCache = progressiveCache;
+            _cacheService = cacheService;
         }
 
         internal async Task<IEnumerable<string>> GetClassColumnNames(string className)
@@ -43,7 +50,7 @@ namespace HBS.Xperience.TransformableViews.Repositories
             return form.GetColumnNames();
         }
 
-        internal async Task<dynamic?> GetWebPage(bool isAuthenticated)
+        public async Task<dynamic?> GetWebPage(bool isAuthenticated)
         {
             var page = _contextRetriever.Retrieve().WebPage;
 
@@ -64,31 +71,66 @@ namespace HBS.Xperience.TransformableViews.Repositories
                 IncludeSecuredItems = isAuthenticated || _channelContext.IsPreview
             };
 
-            var result = await _queryExecutor.GetResult(builder, map => GetColumnValues(map, columnNames), queryOptions);
+            ExpandoObject? result = await _progressiveCache.LoadAsync(async cs =>
+            {
+                var pageResult = (await _queryExecutor.GetResult(builder, map => GetColumnValues(map, columnNames), queryOptions))?.FirstOrDefault();
+                if (pageResult != null)
+                {
+                    cs.CacheDependency = _cacheService.GetCacheDependencies(CacheHelper.BuildCacheItemName(new[] { "webpageitem",
+                                                                       "byid",
+                                                                       page?.WebPageItemID.ToString() }));
+                }
+                return pageResult;
+            }, new CacheSettings(30, true, "GetWebPage", page.ContentTypeName, page.WebPageItemID, page.WebsiteChannelID, page.LanguageID));
 
-            return (result).FirstOrDefault();
+            return result;
         }
 
-        internal async Task<ExpandoObject[]> GetContentItems(Guid? contentType, IEnumerable<Guid> selectedContent)
+        public async Task<ExpandoObject[]> GetContentItems(Guid? contentType, IEnumerable<Guid> selectedContent)
         {
-            // Retrive the DataClass in order to get the FormDefinition.  Have to query it from the table because content types are not loaded from the database. 
-            var type = (await DataClassInfoProvider.ProviderObject.Get().WhereEquals(nameof(DataClassInfo.ClassGUID), contentType).GetEnumerableTypedResultAsync()).FirstOrDefault();
+            return await _progressiveCache.LoadAsync(async cs =>
+            {
+                // Retrive the DataClass in order to get the FormDefinition.  Have to query it from the table because content types are not loaded from the database. 
+                var type = (await DataClassInfoProvider.ProviderObject.Get().WhereEquals(nameof(DataClassInfo.ClassGUID), contentType).GetEnumerableTypedResultAsync()).FirstOrDefault();
 
-            // Parse out the column names from the form definition
-            var columNames = await GetClassColumnsNames(type);
+                // Parse out the column names from the form definition
+                var columNames = await GetClassColumnsNames(type);
 
-            // Builds the query - the content type must match the one configured for the selector
-            var query = new ContentItemQueryBuilder()
-                            .ForContentType(type.ClassName,
-                                  config => config
-                                    .Where(where =>
-                                    where
-                                            .WhereIn(nameof(IContentQueryDataContainer.ContentItemGUID), selectedContent.ToList())
-                                    ));
+                // Builds the query - the content type must match the one configured for the selector
+                var query = new ContentItemQueryBuilder()
+                                .ForContentType(type.ClassName,
+                                      config => config
+                                        .Where(where =>
+                                        where
+                                                .WhereIn(nameof(IContentQueryDataContainer.ContentItemGUID), selectedContent.ToList())
+                                        ));
 
-            // builds the expando object columns
-            ExpandoObject[] items = (await _queryExecutor.GetResult(query, map => GetColumnValues(map, columNames))).ToArray();
-            return items;
+                // builds the expando object columns
+                ExpandoObject[] items = (await _queryExecutor.GetResult(query, map => GetColumnValues(map, columNames))).ToArray();
+
+                cs.CacheDependency = _cacheService.GetCacheDependencies(await GetDependencyCacheKeys(items));
+
+                return items;
+            }, new CacheSettings(30, true, $"GetContentItems|{contentType}|{string.Join('|', selectedContent)}"));
+        }
+
+        public async Task<ISet<string>> GetDependencyCacheKeys(ExpandoObject[] items)
+        {
+            var dependencyCacheKeys = new HashSet<string>();
+            // Adds cache dependencies on each page in the collection
+            foreach (IDictionary<string, object?> item in items)
+            {
+                if (item != null)
+                {
+                    // Builds a cache key "webpageitem|byid|<pageId>" for each article
+                    dependencyCacheKeys.Add(CacheHelper.BuildCacheItemName(new[] { "contentitem",
+                                                                       "byid",
+                                                                       item["ContentItemID"]?.ToString() }));
+                }
+            }
+
+            // Creates the cache dependency object from the generated cache keys
+            return dependencyCacheKeys;
         }
 
         internal ExpandoObject GetColumnValues(IContentQueryDataContainer map, IEnumerable<string> columnNames)
@@ -112,7 +154,7 @@ namespace HBS.Xperience.TransformableViews.Repositories
                     {
                         try
                         {
-                            var parsed = JsonSerializer.Deserialize<ExpandoObject>(value);
+                            dynamic parsed = JsonSerializer.Deserialize<dynamic>(value);
                             eOb.Add(columnName, parsed);
                             continue;
                         }
@@ -125,6 +167,96 @@ namespace HBS.Xperience.TransformableViews.Repositories
                 }
             }
             return (ExpandoObject)eOb;
+        }
+
+        public async Task<IEnumerable<dynamic>> GetObjectItems(TransformableViewObjectsFormComponentModel model)
+        {
+            var query = new ObjectQuery(model.ClassName);
+            if (!string.IsNullOrWhiteSpace(model.Columns))
+            {
+                query.Columns(model.Columns.Split(","));
+            }
+            if (!string.IsNullOrWhiteSpace(model.WhereCondition))
+            {
+                var where = new WhereCondition(model.WhereCondition);
+                query.Where(where);
+            }
+            if (!string.IsNullOrWhiteSpace(model.OrderBy))
+            {
+                query.OrderBy(model.OrderBy.Split(","));
+            }
+            if (model.TopN != null)
+            {
+                query.TopN(model.TopN.Value);
+            }
+
+            var type = ObjectTypeManager.RegisteredTypes.Where(x => x.ObjectClassName.ToLower() == model.ClassName.ToLower()).FirstOrDefault();
+            if (type == null)
+            {
+                return await GetObjectItemsInternal(query);
+            }
+            else
+            {
+
+                return await _progressiveCache.LoadAsync(async cs =>
+                {
+                    var expendables = await GetObjectItemsInternal(query);
+                    cs.CacheDependency = _cacheService.GetCacheDependencies(await GetDependencyCacheKeys(expendables, model.ClassName, type.IDColumn));
+                    return expendables;
+                }, new CacheSettings(30, true, "GetObjectItems", query.GetFullQueryText()));
+            }
+        }
+
+        private async Task<List<dynamic>> GetObjectItemsInternal(ObjectQuery query)
+        {
+            IEnumerable<IDataContainer> items = await query.GetDataContainerResultAsync(CommandBehavior.Default);
+
+            var columns = items.First().ColumnNames;
+            var expendables = new List<dynamic>();
+            foreach (var item in items)
+            {
+                var expando = new ExpandoObject() as IDictionary<string, object>;
+                foreach (var column in columns)
+                {
+                    var value = item[column];
+                    if (value.GetType() == typeof(string))
+                    {
+                        try
+                        {
+                            var parsed = JsonSerializer.Deserialize<dynamic>((string)value);
+                            expando.Add(column, parsed);
+                        }
+                        catch
+                        {
+                            expando.Add(column, value);
+                        }
+                    }
+                    else
+                    {
+                        expando.Add(column, value);
+                    }
+                }
+                expendables.Add(expando);
+            };
+            return expendables;
+        }
+        private async Task<ISet<string>> GetDependencyCacheKeys(IEnumerable<dynamic> items, string className, string idColumn)
+        {
+            var dependencyCacheKeys = new HashSet<string>();
+            // Adds cache dependencies on each page in the collection
+            foreach (IDictionary<string, object?> item in items)
+            {
+                if (item != null)
+                {
+                    // Builds a cache key "webpageitem|byid|<pageId>" for each article
+                    dependencyCacheKeys.Add(CacheHelper.BuildCacheItemName(new[] { className,
+                                                                       "byid",
+                                                                       item[idColumn]?.ToString() }));
+                }
+            }
+
+            // Creates the cache dependency object from the generated cache keys
+            return dependencyCacheKeys;
         }
     }
 }

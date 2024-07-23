@@ -10,6 +10,7 @@ namespace HBS.Xperience.TransformableViewsShared
         {
             builder.Services.AddSingleton<ITransformableViewRepository, TransformableViewRepository>();
             builder.Services.AddSingleton<IEncryptionService>(new EncryptionService(aesKey));
+            builder.Services.AddScoped<ICacheService, CacheService>();
 
             return builder;
         }
