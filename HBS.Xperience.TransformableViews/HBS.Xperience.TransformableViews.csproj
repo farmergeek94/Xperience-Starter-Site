@@ -9,10 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="_ViewImports.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
@@ -22,18 +18,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HBS.Xperience.TransformableViewsShared\HBS.Xperience.TransformableViewsShared.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <UpToDateCheckInput Remove="_ViewImports.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="_ViewImports.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="_ViewImports.cshtml" />
   </ItemGroup>
 
 </Project>

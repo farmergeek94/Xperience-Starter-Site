@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using HBS.Xperience.TransformableViewsShared.Services;
 using HBS.Xperience.TransformableViewsShared.Models;
 using System.Data;
+using System.Data.Common;
 
 namespace HBS.Xperience.TransformableViews.Repositories
 {
@@ -107,29 +108,12 @@ namespace HBS.Xperience.TransformableViews.Repositories
                 // builds the expando object columns
                 ExpandoObject[] items = (await _queryExecutor.GetResult(query, map => GetColumnValues(map, columNames))).ToArray();
 
-                cs.CacheDependency = _cacheService.GetCacheDependencies(await GetDependencyCacheKeys(items));
+                cs.CacheDependency = _cacheService.GetCacheDependencies(CacheHelper.BuildCacheItemName(new[] { "contentitem",
+                                                                       "bycontenttype",
+                                                                       type.ClassName }));
 
                 return items;
             }, new CacheSettings(30, true, $"GetContentItems|{contentType}|{string.Join('|', selectedContent)}"));
-        }
-
-        public async Task<ISet<string>> GetDependencyCacheKeys(ExpandoObject[] items)
-        {
-            var dependencyCacheKeys = new HashSet<string>();
-            // Adds cache dependencies on each page in the collection
-            foreach (IDictionary<string, object?> item in items)
-            {
-                if (item != null)
-                {
-                    // Builds a cache key "webpageitem|byid|<pageId>" for each article
-                    dependencyCacheKeys.Add(CacheHelper.BuildCacheItemName(new[] { "contentitem",
-                                                                       "byid",
-                                                                       item["ContentItemID"]?.ToString() }));
-                }
-            }
-
-            // Creates the cache dependency object from the generated cache keys
-            return dependencyCacheKeys;
         }
 
         internal ExpandoObject GetColumnValues(IContentQueryDataContainer map, IEnumerable<string> columnNames)
@@ -200,7 +184,10 @@ namespace HBS.Xperience.TransformableViews.Repositories
                 return await _progressiveCache.LoadAsync(async cs =>
                 {
                     var expendables = await GetObjectItemsInternal(query);
-                    cs.CacheDependency = _cacheService.GetCacheDependencies(await GetDependencyCacheKeys(expendables, model.ClassName, type.IDColumn));
+                    cs.CacheDependency = _cacheService.GetCacheDependencies(CacheHelper.BuildCacheItemName(new[] { 
+                        type.ObjectClassName,
+                        "all"
+                    }));
                     return expendables;
                 }, new CacheSettings(30, true, "GetObjectItems", query.GetFullQueryText()));
             }
@@ -217,8 +204,8 @@ namespace HBS.Xperience.TransformableViews.Repositories
                 var expando = new ExpandoObject() as IDictionary<string, object>;
                 foreach (var column in columns)
                 {
-                    var value = item[column];
-                    if (value.GetType() == typeof(string))
+                    dynamic value = item[column];
+                    if (value.GetType() == typeof(string) && (value.IndexOf("[") > -1 || value.IndexOf("{") > -1))
                     {
                         try
                         {
@@ -238,24 +225,6 @@ namespace HBS.Xperience.TransformableViews.Repositories
                 expendables.Add(expando);
             };
             return expendables;
-        }
-        private async Task<ISet<string>> GetDependencyCacheKeys(IEnumerable<dynamic> items, string className, string idColumn)
-        {
-            var dependencyCacheKeys = new HashSet<string>();
-            // Adds cache dependencies on each page in the collection
-            foreach (IDictionary<string, object?> item in items)
-            {
-                if (item != null)
-                {
-                    // Builds a cache key "webpageitem|byid|<pageId>" for each article
-                    dependencyCacheKeys.Add(CacheHelper.BuildCacheItemName(new[] { className,
-                                                                       "byid",
-                                                                       item[idColumn]?.ToString() }));
-                }
-            }
-
-            // Creates the cache dependency object from the generated cache keys
-            return dependencyCacheKeys;
         }
     }
 }

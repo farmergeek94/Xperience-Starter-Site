@@ -1,6 +1,7 @@
 ﻿using CMS.Core;
 using HBS.Xperience.TransformableViews.Repositories;
 using HBS.Xperience.TransformableViewsShared.Repositories;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -15,6 +16,11 @@ namespace HBS.Xperience.TransformableViews
             builder.Services.AddTransient<IFileProvider, TransformableViewFileProvider>(sp => {
                 var provider = ActivatorUtilities.CreateInstance<TransformableViewFileProvider>(sp);
                 return provider;
+            });
+
+            builder.Services.AddTransient<IFileProvider>(sp => {
+                var host = ActivatorUtilities.GetServiceOrCreateInstance<IWebHostEnvironment>(sp);
+                return host.WebRootFileProvider;
             });
 
             builder.Services

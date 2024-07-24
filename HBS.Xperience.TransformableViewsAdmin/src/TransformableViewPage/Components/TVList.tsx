@@ -62,7 +62,7 @@ export default ({ categoryID }: { categoryID: number }) => {
                 <Column>
                     <Row spacing={Spacing.L}>
                         <Column cols={Cols.Col2}>
-                            <Button fillContainer={true} label="Add View" color={ButtonColor.Primary} onClick={() => openDialog({ transformableViewContent: "", transformableViewDisplayName: "", transformableViewTransformableViewCategoryID: categoryID, transformableViewType: 0 })}></Button>
+                            <Button fillContainer={true} label="Add View" color={ButtonColor.Primary} onClick={() => openDialog({ transformableViewContent: "", transformableViewDisplayName: "", transformableViewTransformableViewCategoryID: categoryID, transformableViewType: 0, transformableViewClassName: "" })}></Button>
                         </Column>
                         <Column><Input placeholder="Search" value={search} type="text" onChange={(e) => setSearch(e.currentTarget.value)} clearButton={<span onClick={() => setSearch(undefined)}><Icon name={"xp-modal-close"} /></span>} /></Column>
                     </Row>
@@ -72,7 +72,7 @@ export default ({ categoryID }: { categoryID: number }) => {
         <div style={{ paddingBottom: 20 }}><Divider orientation={DividerOrientation.Horizontal} /></div>
 
         <Grid cols={3} columnGap={Spacing.L} rowGap={ Spacing.L }>
-            {views.map(x => <div className="grid-view-item" onClick={() => openDialog(x)}>
+            {views.map(x => <div key={x.transformableViewID } className="grid-view-item" onClick={() => openDialog(x)}>
                 <span style={{ paddingRight: 8 }}>
                     <Icon name="xp-layout" />
                 </span>

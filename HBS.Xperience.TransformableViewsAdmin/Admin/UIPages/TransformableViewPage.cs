@@ -7,6 +7,7 @@ using HBS.TransformableViews;
 using HBS.TransformableViews_Experience;
 using HBS.Xperience.TransformableViewsAdmin.Admin.Models;
 using HBS.Xperience.TransformableViewsAdmin.Admin.UIPages;
+using HBS.Xperience.TransformableViewsShared.Library;
 using HBS.Xperience.TransformableViewsShared.Models;
 using HBS.Xperience.TransformableViewsShared.Services;
 using Kentico.Xperience.Admin.Base;
@@ -60,6 +61,7 @@ namespace HBS.Xperience.TransformableViewsAdmin.Admin.UIPages
         [PageCommand]
         public async Task<ICommandResponse> SetView(TransformableViewItem model)
         {
+
             if (model.TransformableViewID != null)
             {
                 TransformableViewInfo view = await _transformableViewInfoProvider.GetAsync(model.TransformableViewID.Value);
@@ -69,11 +71,16 @@ namespace HBS.Xperience.TransformableViewsAdmin.Admin.UIPages
                     view.TransformableViewContent = model.TransformableViewContent;
                     view.TransformableViewType = model.TransformableViewType;
                     view.TransformableViewClassName = model.TransformableViewClassName;
-                    _transformableViewInfoProvider.Set(view);
+                    using (CMSTransactionScope tr = new CMSTransactionScope())
+                    {
+                        _transformableViewInfoProvider.Set(view);
+                        tr.Commit();
+                    }
                     return ResponseFrom((ITransformableViewItem)view).AddSuccessMessage("View saved");
                 }
                 return Response().AddErrorMessage("View not found");
-            } else
+            }
+            else
             {
                 TransformableViewInfo view = new()
                 {
@@ -85,26 +92,37 @@ namespace HBS.Xperience.TransformableViewsAdmin.Admin.UIPages
                     TransformableViewClassName = model.TransformableViewClassName
                 };
 
-                // Add guid if it fails.
-                try
+                using (CMSTransactionScope tr = new CMSTransactionScope())
                 {
+                    // Add guid if it already exists
+                    var exists = await _transformableViewInfoProvider.GetAsync(view.TransformableViewName);
+                    if (exists != null) {
+                        view.TransformableViewName = view.TransformableViewName + "_" + Guid.NewGuid().ToString();
+                    }
                     _transformableViewInfoProvider.Set(view);
-                }
-                catch
-                {
-                    view.TransformableViewName = view.TransformableViewName + "_" + Guid.NewGuid().ToString();
-                    // reset the content to avoid double encryption.  
-                    view.TransformableViewContent = model.TransformableViewContent;
-                    _transformableViewInfoProvider.Set(view);
+                    tr.Commit();
                 }
                 return ResponseFrom((ITransformableViewItem)view).AddSuccessMessage("View creaeted");
             }
         }
 
         [PageCommand]
-        public async Task<ICommandResponse> GetClassNames()
+        public async Task<ICommandResponse> GetClassNames(string requestVal)
         {
-            var classNames = (await DataClassInfoProvider.GetClasses().Columns(nameof(DataClassInfo.ClassName), nameof(DataClassInfo.ClassDisplayName)).GetEnumerableTypedResultAsync()).Select(x=> new { x.ClassName, x.ClassDisplayName });
+            var type = (TransformableViewTypeEnum)int.Parse(requestVal);
+            dynamic classNames = type switch
+            {
+                TransformableViewTypeEnum.Page or TransformableViewTypeEnum.Transformable => (await DataClassInfoProvider.GetClasses()
+                                        .Columns(nameof(DataClassInfo.ClassName), nameof(DataClassInfo.ClassDisplayName))
+                                        .WhereEquals(nameof(DataClassInfo.ClassType), "Content").WhereEquals(nameof(DataClassInfo.ClassContentTypeType), "Reusable")
+                                        .GetEnumerableTypedResultAsync()).Select(x => new { x.ClassName, ClassDisplayName = $"{x.ClassDisplayName} ({x.ClassName})" }),
+                TransformableViewTypeEnum.Listing => (await DataClassInfoProvider.GetClasses()
+                                        .Columns(nameof(DataClassInfo.ClassName), nameof(DataClassInfo.ClassDisplayName))
+                                        .WhereNotEquals(nameof(DataClassInfo.ClassType), "Content")
+                                        .GetEnumerableTypedResultAsync()).Select(x => new { x.ClassName, ClassDisplayName = $"{x.ClassDisplayName} ({x.ClassName})" }),
+                TransformableViewTypeEnum.Layout => Enumerable.Empty<string>(),
+                _ => Enumerable.Empty<string>(),
+            };
             return ResponseFrom(new { classNames });
         }
 
@@ -119,14 +137,19 @@ namespace HBS.Xperience.TransformableViewsAdmin.Admin.UIPages
                 var views = await _transformableViewInfoProvider.Get().Where(w =>
                     w.WhereIn(nameof(ITransformableViewItem.TransformableViewID), ids.ToArray())
                 ).GetEnumerableTypedResultAsync();
-                foreach(var viewModel in model) {
-                    var view = views.First(x => x.TransformableViewID == viewModel.TransformableViewID);
-                    view.TransformableViewDisplayName = viewModel.TransformableViewDisplayName;
-                    view.TransformableViewContent = viewModel.TransformableViewContent;
-                    view.TransformableViewType = viewModel.TransformableViewType;
-                    view.TransformableViewClassName = viewModel.TransformableViewClassName;
-                    _transformableViewInfoProvider.Set(view);
-                    viewList.Add(view);
+                using (CMSTransactionScope tr = new CMSTransactionScope())
+                {
+                    foreach (var viewModel in model)
+                    {
+                        var view = views.First(x => x.TransformableViewID == viewModel.TransformableViewID);
+                        view.TransformableViewDisplayName = viewModel.TransformableViewDisplayName;
+                        view.TransformableViewContent = viewModel.TransformableViewContent;
+                        view.TransformableViewType = viewModel.TransformableViewType;
+                        view.TransformableViewClassName = viewModel.TransformableViewClassName;
+                        _transformableViewInfoProvider.Set(view);
+                        viewList.Add(view);
+                    }
+                    tr.Commit();
                 }
             }
             return ResponseFrom(viewList);

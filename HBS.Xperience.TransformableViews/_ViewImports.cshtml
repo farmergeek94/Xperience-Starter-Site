@@ -1,3 +1,9 @@
-﻿
+﻿@using Kentico.Content.Web.Mvc.PageBuilder
+@using Kentico.PageBuilder.Web.Mvc
+@using Kentico.Content.Web.Mvc;
+@using Kentico.Web.Mvc
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-@addTagHelper  Kentico.Web.Mvc.Caching.CacheDependencyTagHelper, Kentico.Web.Mvc
+@addTagHelper *, HBS.Xperience.TransformableViews
+@addTagHelper Kentico.Web.Mvc.Caching.CacheDependencyTagHelper, Kentico.Web.Mvc
+
+@inject HBS.Xperience.TransformableViewsShared.Services.ICacheService CacheService

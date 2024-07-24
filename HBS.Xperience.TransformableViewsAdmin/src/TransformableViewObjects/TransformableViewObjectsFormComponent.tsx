@@ -37,13 +37,13 @@ export const TransformableViewObjectsFormComponent = (props: FormComponentProps)
     const { executeCommand } = useFormComponentCommandProvider();
 
     useEffect(() => {
-        executeCommand && executeCommand<SelectListItem[]>(props, 'GetViews')
+        executeCommand && value.className && value.className.length != 0 && executeCommand<SelectListItem[], string>(props, 'GetViews', value.className)
             .then(data => {
                 if (data) {
                     setViews(data);
                 }
             });
-    }, [executeCommand]);
+    }, [executeCommand, value.className]);
 
     return <FormItemWrapper
         label={props.label}
@@ -90,7 +90,7 @@ export const TransformableViewObjectsFormComponent = (props: FormComponentProps)
         <div style={{ zIndex: 999999999 }}>
         <WindowPortal>
             {dialog && <ObjectTypesDialog open={dialog} props={props} onSelect={(x) => update({ ...value, className: x })} closeDialog={() => setDialog(false)} value={value.className} />}
-            {viewsDialog && <ViewsDialog open={viewsDialog} props={props} onSelect={(x) => update({ ...value, view: x })} closeDialog={() => setViewsDialog(false)} value={value.view} />}
+                {viewsDialog && <ViewsDialog open={viewsDialog} className={ value.className } props={props} onSelect={(x) => update({ ...value, view: x })} closeDialog={() => setViewsDialog(false)} value={value.view} />}
         </WindowPortal>
         </div>
     </FormItemWrapper>

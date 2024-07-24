@@ -1,16 +1,14 @@
-﻿@using Kentico.PageBuilder.Web.Mvc
-@using Kentico.Web.Mvc
-@using HBS.Xperience.TransformableViews.Components
-@addTagHelper *, HBS.Xperience.TransformableViews
-@inject HBS.Xperience.TransformableViewsShared.Services.ICacheService CacheService
+﻿@using HBS.Xperience.TransformableViews.Components
 @model ComponentViewModel<TransformableViewObjectsWidgetProperties>
 
 @{
     try
     {
-        <cache priority="Microsoft.Extensions.Caching.Memory.CacheItemPriority.High" expires-sliding="@TimeSpan.FromMinutes(30)" vary-by-user="true">
-            <cache-dependency cache-keys="@CacheService.GetDependenciesList()" />
+        var cacheEnabled = !Context.Kentico().Preview().Enabled;
+
+        <cache priority="Microsoft.Extensions.Caching.Memory.CacheItemPriority.High" expires-sliding="@TimeSpan.FromMinutes(30)" vary-by-user="true" enabled="cacheEnabled">
             <vc:transformable-view-objects-widget model="Model.Properties.Model"></vc:transformable-view-objects-widget>
+            <cache-dependency cache-keys="@CacheService.GetDependenciesList()" enabled="cacheEnabled" />
         </cache>
     }
     catch (Exception ex)

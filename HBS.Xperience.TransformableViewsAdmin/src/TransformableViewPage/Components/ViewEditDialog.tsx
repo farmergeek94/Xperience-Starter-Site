@@ -17,28 +17,28 @@ export interface ViewDialogOptions {
 
 export default ({ selectedView, setViewsCommand, open, closeDialog }: ViewDialogOptions) => {
     const [displayName, setDisplayName] = useState(selectedView?.transformableViewDisplayName);
-    const [transformableViewType, setTransformableViewType] = useState(selectedView?.transformableViewType);
+    const [transformableViewType, setTransformableViewType] = useState(selectedView?.transformableViewType?.toString());
     const [transformableViewClassName, setTransformableViewClassName] = useState(selectedView?.transformableViewClassName);
     const [content, setContent] = useState(selectedView?.transformableViewContent);
     const [classNames, setClassNames] = useState<TVClassItem[]>([]);
 
     useEffect(() => {
-        getClassNames();
-    }, []);
+        getClassNames(transformableViewType);
+    }, [transformableViewType]);
 
     const handleCancel = () => {
         closeDialog();
     }
 
     const handleConfirm = () => {
-        selectedView && setViewsCommand({ ...selectedView, transformableViewDisplayName: displayName ?? "", transformableViewContent: content ?? "", transformableViewType: transformableViewType ?? 0 });
+        selectedView && setViewsCommand({ ...selectedView, transformableViewDisplayName: displayName ?? "", transformableViewContent: content ?? "", transformableViewType: Number(transformableViewType ?? "0"), transformableViewClassName });
         closeDialog();
     }
 
-    const {execute: getClassNames } = usePageCommand<TVClassItem[]>("GetClassNames", {
+    const {execute: getClassNames } = usePageCommand<TVClassItem[], number | undefined>("GetClassNames", {
         after: (response) => {
             if (response) {
-                setClassNames(response);
+                setClassNames(response.classNames);
             }
         }
     });
@@ -51,19 +51,19 @@ export default ({ selectedView, setViewsCommand, open, closeDialog }: ViewDialog
             <Input label="Code Name" value={selectedView?.transformableViewName} disabled={ true } />
         </div>
         <div style={{ paddingBottom: 20 }}>
-            <Select value={transformableViewType?.toString()} onChange={(val) => selectedView && setTransformableViewType(Number(val)) }>
+            <Select value={transformableViewType?.toString()} onChange={(val) => selectedView && setTransformableViewType(val) }>
                 <MenuItem value={"3"} primaryLabel="Transformable" />
                 <MenuItem value={"0"} primaryLabel="Layout" />
                 <MenuItem value={"1"} primaryLabel="Page" />
                 <MenuItem value={"2"} primaryLabel="Listing" />
             </Select>
         </div>
-        <div style={{ paddingBottom: 20 }}>
-            <Select value={transformableViewClassName?.toString()} onChange={(val) => selectedView && setTransformableViewClassName(val)} markAsRequired={true}>
+        {transformableViewType != "0" && <div style={{ paddingBottom: 20 }}>
+            <Select value={transformableViewClassName?.toString()} onChange={(val) => selectedView && setTransformableViewClassName(val)}>
                 <MenuItem value={""} primaryLabel={"(Select a Class)"} />
-                {classNames.map(x => <MenuItem key={x.className} value={x.className} primaryLabel={x.classDisplayName } />) }
+                {classNames.map(x => <MenuItem key={x.className} value={x.className} primaryLabel={x.classDisplayName} />)}
             </Select>
-        </div>
+        </div>}
         <div>
             <TextWithLabel label="View Editor" value={ `<div><span style="color: #af00db;">@addTagHelper</span> <span style="color: #a31515;">*, Microsoft.AspNetCore.Mvc.TagHelpers</span></div><div><span style="color: #af00db;">@model</span> <span style="color: #267f99;">HBS</span><span style="color: #000000;">.</span><span style="color: #267f99;">Xperience</span><span style="color: #000000;">.</span><span style="color: #267f99;">TransformableViews</span><span style="color: #000000;">.</span><span style="color: #267f99;">Models</span><span style="color: #000000;">.</span><span style="color: #267f99;">TransformableViewModel</span></div>` } valueAsHtml={true} />
             <CodeEditor style={{ maxWidth: "100%", width: "1000px" }} language={'html' as any} value={content} onChange={(e) => setContent(e)} explanationText={`

@@ -9,9 +9,10 @@ interface ViewDialogProperties {
     open: boolean
     closeDialog: () => void
     props: FormComponentProps
+    className: string
 }
 
-export default ({ value, onSelect, open, closeDialog, props }: ViewDialogProperties) => {
+export default ({ value, onSelect, open, closeDialog, props, className }: ViewDialogProperties) => {
     const [selectedView, setSelectedView] = useState(value);
     const [search, setSearch] = useState<string>();
     const [items, setItems] = useState<SelectListItem[]>([]);
@@ -19,13 +20,13 @@ export default ({ value, onSelect, open, closeDialog, props }: ViewDialogPropert
     const { executeCommand } = useFormComponentCommandProvider();
 
     useEffect(() => {
-        executeCommand && executeCommand<SelectListItem[]>(props, 'GetViews')
+        executeCommand && className && className.length != 0 && executeCommand<SelectListItem[], string>(props, 'GetViews', className)
             .then(data => {
                 if (data) {
                     setItems(data);
                 }
             });
-    }, [executeCommand]);
+    }, [executeCommand, className]);
 
     const filteredItems = useMemo(() => {
         if (!search || search.length == 0) {

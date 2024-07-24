@@ -65,10 +65,10 @@ namespace HBS.Xperience.TransformableViewsShared.Repositories
             return names.Where(x => x.TransformableViewTypeEnum == TransformableViewTypeEnum.Transformable).Select(x=>new SelectListItem(x.TransformableViewDisplayName, x.TransformableViewName));
         }
 
-        public async Task<IEnumerable<SelectListItem>> GetTransformableViewObjectSelectItems()
+        public async Task<IEnumerable<SelectListItem>> GetTransformableViewObjectSelectItems(string className)
         {
             var names = await TransformableViewNames();
-            return names.Where(x=>x.TransformableViewTypeEnum == TransformableViewTypeEnum.Listing).Select(x => new SelectListItem(x.TransformableViewDisplayName, x.TransformableViewName));
+            return names.Where(x=>x.TransformableViewTypeEnum == TransformableViewTypeEnum.Listing && x.TransformableViewClassName == className).Select(x => new SelectListItem(x.TransformableViewDisplayName, x.TransformableViewName));
         }
 
         private async Task<IEnumerable<TransformableViewInfo>> TransformableViewNames()
@@ -82,7 +82,7 @@ namespace HBS.Xperience.TransformableViewsShared.Repositories
                         ]);
                 }
                 return await _transformableViewInfoProvider.Get()
-                .Columns(nameof(TransformableViewInfo.TransformableViewName), nameof(TransformableViewInfo.TransformableViewDisplayName), nameof(TransformableViewInfo.TransformableViewType)).GetEnumerableTypedResultAsync();
+                .Columns(nameof(TransformableViewInfo.TransformableViewName), nameof(TransformableViewInfo.TransformableViewDisplayName), nameof(TransformableViewInfo.TransformableViewType), nameof(TransformableViewInfo.TransformableViewClassName)).GetEnumerableTypedResultAsync();
             }, new CacheSettings(86400 * 365, "GetTransformableViewInfoNames"));
         }
     }

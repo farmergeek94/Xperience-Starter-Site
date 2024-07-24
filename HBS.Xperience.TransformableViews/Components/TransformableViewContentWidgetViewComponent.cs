@@ -148,7 +148,46 @@ namespace HBS.Xperience.TransformableViews.Components
     public class TransformableViewWhere : IObjectSelectorWhereConditionProvider
     {
         // Where Limiting the View type to transformable.
-        public WhereCondition Get() => new WhereCondition().WhereEquals(nameof(TransformableViewInfo.TransformableViewType), (int)TransformableViewTypeEnum.Transformable);
+        public WhereCondition Get()
+        {
+            var where = new WhereCondition().WhereEquals(nameof(TransformableViewInfo.TransformableViewType), (int)TransformableViewTypeEnum.Transformable);
+            var httpContextAccessor = Service.ResolveOptional<IHttpContextAccessor>();
+            var form = httpContextAccessor.HttpContext?.Request.Form;
+            if (form != null)
+            {
+                if (form.TryGetValue("command", out StringValues command))
+                {
+                    // Get the form data passed back to the filter. 
+                    if (form.TryGetValue("data", out StringValues data))
+                    {
+                        try
+                        {
+                            var formData = JsonSerializer.Deserialize<TransformableViewContentWidgetPropertiesForm>(data, new JsonSerializerOptions
+                            {
+                                PropertyNameCaseInsensitive = true
+                            });
+
+                            if (formData?.Form != null)
+                            {
+                                // Get the content type value for filtering.
+                                var contentType = formData?.Form.ContentType.FirstOrDefault();
+
+                                var dataClass = DataClassInfoProvider.GetClasses().WhereEquals(nameof(DataClassInfo.ClassGUID), contentType.ObjectGuid.HasValue ? contentType.ObjectGuid.Value : Guid.Empty).FirstOrDefault();
+
+                                if (dataClass != null)
+                                {
+                                    where = where.WhereEquals(nameof(TransformableViewInfo.TransformableViewClassName), dataClass.ClassName);
+                                }
+                            }
+                        }
+                        catch (Exception)
+                        {
+                        }
+                    }
+                }
+            }
+            return where;
+        }
     }
 
     /// <summary>

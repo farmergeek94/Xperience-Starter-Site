@@ -30,12 +30,14 @@ namespace HBS.Xperience.TransformableViewsShared.Services
         public CMSCacheDependency GetCacheDependencies(string key)
         {
             _keys.Add(key);
-            return CacheHelper.GetCacheDependency(key);
+            return CacheHelper.GetCacheDependency([key, $"{TransformableViewInfo.OBJECT_TYPE}|all"]);
         }
         public CMSCacheDependency GetCacheDependencies(IEnumerable<string> keys)
         {
             _keys.AddRange(keys);
-            return CacheHelper.GetCacheDependency(keys.ToArray());
+            var list = keys.ToList();
+            list.Add($"{TransformableViewInfo.OBJECT_TYPE}|all");
+            return CacheHelper.GetCacheDependency(list.ToArray());
         }
     }
 }
