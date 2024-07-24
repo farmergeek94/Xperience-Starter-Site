@@ -112,14 +112,18 @@ namespace HBS.Xperience.TransformableViewsAdmin.Admin.UIPages
             var type = (TransformableViewTypeEnum)int.Parse(requestVal);
             dynamic classNames = type switch
             {
-                TransformableViewTypeEnum.Page or TransformableViewTypeEnum.Transformable => (await DataClassInfoProvider.GetClasses()
+                TransformableViewTypeEnum.Transformable => (await DataClassInfoProvider.GetClasses()
                                         .Columns(nameof(DataClassInfo.ClassName), nameof(DataClassInfo.ClassDisplayName))
                                         .WhereEquals(nameof(DataClassInfo.ClassType), "Content").WhereEquals(nameof(DataClassInfo.ClassContentTypeType), "Reusable")
                                         .GetEnumerableTypedResultAsync()).Select(x => new { x.ClassName, ClassDisplayName = $"{x.ClassDisplayName} ({x.ClassName})" }),
-                TransformableViewTypeEnum.Listing => (await DataClassInfoProvider.GetClasses()
+                TransformableViewTypeEnum.Page => (await DataClassInfoProvider.GetClasses()
                                         .Columns(nameof(DataClassInfo.ClassName), nameof(DataClassInfo.ClassDisplayName))
-                                        .WhereNotEquals(nameof(DataClassInfo.ClassType), "Content")
+                                        .WhereEquals(nameof(DataClassInfo.ClassType), "Content").WhereNotEquals(nameof(DataClassInfo.ClassContentTypeType), "Reusable")
                                         .GetEnumerableTypedResultAsync()).Select(x => new { x.ClassName, ClassDisplayName = $"{x.ClassDisplayName} ({x.ClassName})" }),
+                TransformableViewTypeEnum.Listing => (await DataClassInfoProvider.GetClasses()
+                                                        .Columns(nameof(DataClassInfo.ClassName), nameof(DataClassInfo.ClassDisplayName))
+                                                        .WhereNotEquals(nameof(DataClassInfo.ClassType), "Content")
+                                                        .GetEnumerableTypedResultAsync()).Select(x => new { x.ClassName, ClassDisplayName = $"{x.ClassDisplayName} ({x.ClassName})" }),
                 TransformableViewTypeEnum.Layout => Enumerable.Empty<string>(),
                 _ => Enumerable.Empty<string>(),
             };
