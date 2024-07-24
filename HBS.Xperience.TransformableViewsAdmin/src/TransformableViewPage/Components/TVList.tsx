@@ -1,7 +1,7 @@
 ﻿import React, { useEffect, useState } from 'react'
 import TransformableViewItem from '../../Shared/TransformableViewItem'
 import { usePageCommand } from '@kentico/xperience-admin-base';
-import { ActionTile, Button, ButtonColor, Cols, Column, Divider, DividerOrientation, Grid, Icon, Input, Row, Spacing, useWindowDimensions } from '@kentico/xperience-admin-components';
+import { ActionTile, Button, ButtonColor, Cols, Column, Divider, DividerOrientation, Grid, Icon, Input, Row, Spacing, useWindowDimensions, Dialog } from '@kentico/xperience-admin-components';
 import ViewEditDialog, { ViewDialogOptions } from './ViewEditDialog';
 
 export default ({ categoryID }: { categoryID: number }) => {
@@ -56,6 +56,17 @@ export default ({ categoryID }: { categoryID: number }) => {
         setShowDialog(true);
     }
 
+    const deleteView = (id: number | undefined) => {
+        if(id){
+            var view = views.find(x=>x.transformableViewID == id)
+            if(view){
+                if( window.confirm("Delete view: " + view.transformableViewDisplayName)) {
+                    deleteViewCommand(id);
+                }
+            }
+        }
+    }
+
     return <div>
         <div style={{ paddingBottom: 20 }}>
             <Row>
@@ -78,7 +89,7 @@ export default ({ categoryID }: { categoryID: number }) => {
                 </span>
                 {x.transformableViewDisplayName}
                 <span style={{ float: 'right', color: "red", flex: 1 }}>
-                    <span onClick={(e) => { e.stopPropagation(); deleteViewCommand(x.transformableViewID) }} style={{float: 'right'}}>
+                    <span onClick={(e) => { e.stopPropagation(); deleteView(x.transformableViewID) }} style={{float: 'right'}}>
                         <Icon name={"xp-bin"} />
                     </span>
                 </span>

@@ -1,5 +1,11 @@
-﻿@using HBS.Xperience.TransformableViews.PageTemplates
-@model TemplateViewModel<TransformableViewPageTemplateProperties>
+﻿@model TemplateViewModel<TransformableViewPageTemplateProperties>
+@{
+    if (Model.Properties.Layout.Any())
+    {
+        Layout = $"TransformableView/{Model.Properties.Layout.First().ObjectCodeName}";
+    }
+}
+@using HBS.Xperience.TransformableViews.PageTemplates
 
 @{
     var cacheEnabled = !Context.Kentico().Preview().Enabled;

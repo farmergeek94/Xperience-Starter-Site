@@ -35,7 +35,7 @@ export default ({ selectedView, setViewsCommand, open, closeDialog }: ViewDialog
         closeDialog();
     }
 
-    const {execute: getClassNames } = usePageCommand<TVClassItem[], number | undefined>("GetClassNames", {
+    const {execute: getClassNames } = usePageCommand<{classNames: TVClassItem[]}, string | undefined>("GetClassNames", {
         after: (response) => {
             if (response) {
                 setClassNames(response.classNames);
