@@ -1,0 +1,4 @@
+<h1>Name</h1>
+<div>@Model.Items[0].Name</div>
+@{var image = @Model.Items[0].Image; }
+@System.Text.Json.JsonSerializer.Serialize(image)

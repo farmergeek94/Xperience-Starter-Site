@@ -18,11 +18,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Kentico.Xperience.WebApp" Version="29.1.4" />
+    <PackageReference Include="Kentico.Xperience.WebApp" Version="29.3.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HBS.Xperience.TransformableViews\HBS.Xperience.TransformableViews.csproj" />
+    <ProjectReference Include="..\..\XperienceComunity.TransformableViews\XperienceComunity.TransformableViews\XperienceComunity.TransformableViews.csproj" />
     <ProjectReference Include="..\StarterSite.Logic\StarterSite.Logic.csproj" />
     <ProjectReference Include="..\StarterSite.Types\StarterSite.Types.csproj" />
   </ItemGroup>
