@@ -33,8 +33,17 @@ export const TransformableViewPageTemplate = ({ tags, taxonomies }: TVCategoryLi
         dispatch({ type: "setDialog", data });
     }
 
+    const { execute: exportViewsCommand } = usePageCommand("ExportViews");
+    const { execute: importViewsCommand } = usePageCommand("ImportViews");
+
     return <div style={{ display: 'flex', flexDirection: "column", height: "100%" }}>
-        <div style={{ paddingBottom: 20 }}><Headline size={HeadlineSize.M}>Transformable Views</Headline></div>
+        <div style={{ paddingBottom: 20, display: "flex", alignItems: "end", justifyContent: "space-between" }}>
+            <Headline size={HeadlineSize.M}>Transformable Views</Headline>
+            <div style={{display: 'flex', gap: "10px", paddingRight: "20px"}}>
+                <Button onClick={() => exportViewsCommand()} label="Export Views To FileSystem"></Button>
+                <Button onClick={() => importViewsCommand()} label="Import Views To Database"></Button>
+            </div>
+        </div>
         <div style={{ flex: 1 }}>
             <TVCategoryListContext.Provider value={{ setCurrentCategory, dialogOptions: state.dialogOptions, setDialog, tags: state.tags, selectedCategory: state.selectedCategory, taxonomies: state.taxonomies }}>
                 <Row ref={rowRef}>

@@ -85,5 +85,26 @@ namespace HBS.Xperience.TransformableViewsShared.Repositories
                 .Columns(nameof(TransformableViewInfo.TransformableViewName), nameof(TransformableViewInfo.TransformableViewDisplayName), nameof(TransformableViewInfo.TransformableViewType), nameof(TransformableViewInfo.TransformableViewClassName)).GetEnumerableTypedResultAsync();
             }, new CacheSettings(86400 * 365, "GetTransformableViewInfoNames"));
         }
+
+        public async Task<IEnumerable<TransformableViewInfo>> TransformableViews()
+        {
+            var views = await _progressiveCache.LoadAsync(async (cs) =>
+            {
+                if (cs.Cached)
+                {
+                    cs.CacheDependency = CacheHelper.GetCacheDependency([
+                            $"{TransformableViewInfo.OBJECT_TYPE}|all"
+                        ]);
+                }
+                return await _transformableViewInfoProvider.Get().GetEnumerableTypedResultAsync();
+            }, new CacheSettings(86400 * 365, "GetTransformableViewInfos"));
+
+            foreach(var view in views)
+            {
+                _encryptionService.DecryptView(view);
+            }
+
+            return views;
+        }
     }
 }

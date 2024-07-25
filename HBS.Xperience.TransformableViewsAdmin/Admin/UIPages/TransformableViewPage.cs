@@ -9,9 +9,11 @@ using HBS.Xperience.TransformableViewsAdmin.Admin.Models;
 using HBS.Xperience.TransformableViewsAdmin.Admin.UIPages;
 using HBS.Xperience.TransformableViewsShared.Library;
 using HBS.Xperience.TransformableViewsShared.Models;
+using HBS.Xperience.TransformableViewsShared.Repositories;
 using HBS.Xperience.TransformableViewsShared.Services;
 using Kentico.Xperience.Admin.Base;
 using Kentico.Xperience.Admin.Base.UIPages;
+using Microsoft.AspNetCore.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,11 +30,15 @@ namespace HBS.Xperience.TransformableViewsAdmin.Admin.UIPages
 
         private readonly ITransformableViewInfoProvider _transformableViewInfoProvider;
         private readonly IEncryptionService _encryptionService;
+        private readonly ITransformableViewRepository _transformableViewRepository;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public TransformableViewPage(ITransformableViewInfoProvider transformableViewInfoProvider, IEncryptionService encryptionService)
+        public TransformableViewPage(ITransformableViewInfoProvider transformableViewInfoProvider, IEncryptionService encryptionService, ITransformableViewRepository transformableViewRepository, IWebHostEnvironment webHostEnvironment)
         {
             _transformableViewInfoProvider = transformableViewInfoProvider;
             _encryptionService = encryptionService;
+            _transformableViewRepository = transformableViewRepository;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public override async Task<TransformableViewPageClientProperties> ConfigureTemplateProperties(TransformableViewPageClientProperties properties)
@@ -165,6 +171,136 @@ namespace HBS.Xperience.TransformableViewsAdmin.Admin.UIPages
             var viewInfo = await _transformableViewInfoProvider.GetAsync(viewID);
             _transformableViewInfoProvider.Delete(viewInfo);
             return ResponseFrom(viewID).AddSuccessMessage("Category Deleted Successfully");
+        }
+
+        [PageCommand]
+        public async Task<ICommandResponse> ExportView(int id)
+        {
+            var view = await _transformableViewInfoProvider.GetAsync(id);
+
+            var contentPath = _webHostEnvironment.ContentRootPath;
+
+            var folderPath = CMS.IO.Path.Combine(contentPath, "TransformableViews", view.TransformableViewTypeEnum.ToString());
+
+            Directory.CreateDirectory(folderPath);
+
+            var filePath = CMS.IO.Path.Combine(folderPath, view.TransformableViewName + ".cshtml");
+            var file = new FileInfo(filePath);
+            using var writer = file.CreateText();
+            writer.Write(_encryptionService.DecryptString(view.TransformableViewContent));
+
+            var importsFile = new FileInfo(CMS.IO.Path.Combine(contentPath, "TransformableViews", "_ViewImports.cshtml"));
+            using var importWriter = importsFile.CreateText();
+            importWriter.Write("@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers\r\n@using Kentico.PageBuilder.Web.Mvc\r\n@using Kentico.Web.Mvc");
+
+            return Response().AddSuccessMessage("View Exported Successfully");
+        }
+
+
+        [PageCommand]
+        public async Task<ICommandResponse> ExportViews()
+        {
+            var views = await _transformableViewRepository.TransformableViews();
+
+            var groups = views.GroupBy(x => x.TransformableViewTypeEnum);
+
+            var contentPath = _webHostEnvironment.ContentRootPath;
+
+            foreach (var group in groups)
+            {
+                var folderPath = CMS.IO.Path.Combine(contentPath, "TransformableViews", group.Key.ToString());
+
+                Directory.CreateDirectory(folderPath);
+
+                foreach(var view in group)
+                {
+                    var filePath = CMS.IO.Path.Combine(folderPath, view.TransformableViewName + ".cshtml");
+                    var file = new FileInfo(filePath);
+                    using var writer = file.CreateText();
+                    writer.Write(_encryptionService.DecryptString(view.TransformableViewContent));
+                }
+            }
+
+            var importsFile = new FileInfo(CMS.IO.Path.Combine(contentPath, "TransformableViews", "_ViewImports.cshtml"));
+            using var importWriter = importsFile.CreateText();
+            importWriter.Write("@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers\r\n@using Kentico.PageBuilder.Web.Mvc\r\n@using Kentico.Web.Mvc");
+
+            return Response().AddSuccessMessage("Views Exported Successfully");
+        }
+
+        [PageCommand]
+        public async Task<ICommandResponse> ImportView(int id)
+        {
+            var view = await _transformableViewInfoProvider.GetAsync(id);
+
+            var contentPath = _webHostEnvironment.ContentRootPath;
+
+            var filePath = CMS.IO.Path.Combine(contentPath, "TransformableViews", view.TransformableViewTypeEnum.ToString(), view.TransformableViewName + ".cshtml");
+
+            if (File.Exists(filePath))
+            {
+                using var tr = new CMSTransactionScope();
+                var file = new FileInfo(filePath);
+                var viewName = file.Name.Replace(file.Extension, "");
+                var delete = false;
+                using (var reader = file.OpenText())
+                {
+                    var viewText = await reader.ReadToEndAsync();
+                    if (view != null)
+                    {
+                        view.TransformableViewContent = viewText;
+                        _transformableViewInfoProvider.Set(view);
+                        delete = true;
+                    }
+                }
+                if (delete)
+                {
+                    file.Delete();
+                    }
+                tr.Commit();
+                return Response().AddSuccessMessage("View Imported Successfully");
+            }
+            return Response().AddErrorMessage("View Not Found on File System");
+        }
+
+        [PageCommand]
+        public async Task<ICommandResponse> ImportViews()
+        {
+            var contentPath = _webHostEnvironment.ContentRootPath;
+
+            var folderPath = CMS.IO.Path.Combine(contentPath, "TransformableViews");
+
+            var files = Directory.EnumerateFiles(folderPath, "*.cshtml", SearchOption.AllDirectories);
+
+            var views = await _transformableViewRepository.TransformableViews();
+
+            var viewsToUpdate = new List<TransformableViewInfo>();
+
+            using var tr = new CMSTransactionScope();
+            foreach(var filePath in files)
+            {
+                var file = new FileInfo(filePath);
+                var viewName = file.Name.Replace(file.Extension, "");
+                var delete = false;
+                using (var reader = file.OpenText())
+                {
+                    var viewText = await reader.ReadToEndAsync();
+                    var view = views.Where(x => x.TransformableViewName == viewName).FirstOrDefault();
+                    if (view != null)
+                    {
+                        view.TransformableViewContent = viewText;
+                        _transformableViewInfoProvider.Set(view);
+                        delete = true;
+                    }
+                }
+                if (delete)
+                {
+                    file.Delete();
+                }
+            }
+            tr.Commit();
+
+            return Response().AddSuccessMessage("Views Imported Successfully");
         }
     }
 

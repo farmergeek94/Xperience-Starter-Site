@@ -51,6 +51,9 @@ export default ({ categoryID }: { categoryID: number }) => {
         }
     });
 
+    const { execute: exportViewCommand } = usePageCommand<void, number>("ExportView");
+    const { execute: importViewCommand } = usePageCommand<void, number>("ImportView");
+
     const openDialog = (view: TransformableViewItem) => {
         setSelectedView(view);
         setShowDialog(true);
@@ -88,8 +91,14 @@ export default ({ categoryID }: { categoryID: number }) => {
                     <Icon name="xp-layout" />
                 </span>
                 {x.transformableViewDisplayName}
-                <span style={{ float: 'right', color: "red", flex: 1 }}>
-                    <span onClick={(e) => { e.stopPropagation(); deleteView(x.transformableViewID) }} style={{float: 'right'}}>
+                <span style={{ float: 'right', flex: 1, gap: 10, display: 'flex', justifyContent: 'flex-end' }}>
+                    <span onClick={(e) => { e.stopPropagation(); exportViewCommand(x.transformableViewID) }} style={{ color: "blue" }}>
+                        <Icon name={"xp-arrow-down-line"} />
+                    </span>
+                    <span onClick={(e) => { e.stopPropagation(); importViewCommand(x.transformableViewID) }} style={{ color: "green" }}>
+                        <Icon name={"xp-arrow-up-line"} />
+                    </span>
+                    <span onClick={(e) => { e.stopPropagation(); deleteView(x.transformableViewID) }} style={{ color: "red" }}>
                         <Icon name={"xp-bin"} />
                     </span>
                 </span>
