@@ -18,9 +18,16 @@ using Xperience.Community.BootstrapRowSection;
 using Xperience.Community.ImageWidget;
 using HBS.Xperience.TransformableViewsShared;
 using HBS.Xperience.TransformableViews;
+using CommandLine;
+using XperienceComunity.TransformableViewsTool;
+using Microsoft.Extensions.Configuration;
+using System.Reflection;
+using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Configuration.SetBasePath(Directory.GetCurrentDirectory())
+     .AddJsonFile("appsettings.json", false, true)
+     .Build();
 
 builder.Services.Configure<RazorViewEngineOptions>(options =>
 {
@@ -33,9 +40,9 @@ builder.Services.AddKentico(features =>
 {
     features.UsePageBuilder(new PageBuilderOptions
     {
-       ContentTypeNames = new[] {
+       ContentTypeNames = [
            Page.CONTENT_TYPE_NAME
-       }
+       ]
     });
     // features.UseActivityTracking();
     features.UseWebPageRouting();
@@ -51,7 +58,7 @@ builder.Services.AddScoped<ILayoutContext, LayoutContext>();
 builder.Services.AddAuthentication();
 // builder.Services.AddAuthorization();
 
-builder.Services.AddControllersWithViews().UseTransformableViewsProvider().WithTransformableViews("QPiJvpcmTu6aUAMR7pgaNFI1DKHnWobx");
+builder.Services.AddControllersWithViews().WithTransformableViews("QPiJvpcmTu6aUAMR7pgaNFI1DKHnWobx").UseTransformableViewsProvider();
 
 builder.Services.AddBootstrapRowSection(x => x.SetupBackgroundItems(new string[] {
     "bg-primary"
@@ -73,6 +80,7 @@ builder.Services.AddImageWidget();
 builder.WebHost.UseStaticWebAssets();
 
 var app = builder.Build();
+
 app.InitKentico();
 
 app.UseStaticFiles();
