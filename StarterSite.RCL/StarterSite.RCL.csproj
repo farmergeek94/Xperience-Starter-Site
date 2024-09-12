@@ -13,7 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Components\Widgets\" />
     <Folder Include="Views\" />
   </ItemGroup>
 
