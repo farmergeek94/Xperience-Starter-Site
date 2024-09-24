@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Xperience.Community.BootstrapRowSection.Models
+namespace Xperience.Accelerator.BootstrapRowSectionShared.Models
 {
     public class BootstrapColumnModel
     {

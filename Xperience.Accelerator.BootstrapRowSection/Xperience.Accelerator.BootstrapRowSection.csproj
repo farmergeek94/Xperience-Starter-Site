@@ -1,11 +1,10 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
-    <AdminOrgName>xperience-community</AdminOrgName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,13 +12,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Kentico.Xperience.Admin" Version="29.3.0" />
+    <PackageReference Include="Kentico.Xperience.WebApp" Version="29.5.0" />
   </ItemGroup>
 
-<ItemGroup>
-  <AdminClientPath Include="dist\**">
-    <ProjectName>bootstrap-row-section</ProjectName>
-  </AdminClientPath>
-</ItemGroup>
-    
+  <ItemGroup>
+    <ProjectReference Include="..\Xperience.Accelerator.BootstrapRowSectionShared\Xperience.Accelerator.BootstrapRowSectionShared.csproj" />
+  </ItemGroup>
+
+
+
 </Project>

@@ -8,14 +8,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Xperience.Community.BootstrapRowSection.Models;
+using Xperience.Accelerator.BootstrapRowSectionShared;
+using Xperience.Accelerator.BootstrapRowSectionShared.Models;
 
-namespace Xperience.Community.BootstrapRowSection.Components.FormComponents.BootstrapRowFormComponent
+namespace Xperience.Accelerator.BootstrapRowSection.Components.FormComponents.BootstrapRowFormComponent
 {
     [ComponentAttribute(typeof(BootstrapRowFormComponentAttribute))]
     public class BootstrapRowFormComponent : FormComponent<BootstrapRowFormComponentProperties, BootstrapRowFormComponentClientProperties, IEnumerable<BootstrapColumnModel>>
     {
-        public override string ClientComponentName => "@xperience-community/bootstrap-row-section/BootstrapRow";
+        public override string ClientComponentName => "@xperience-accelerator/bootstrap-row-section/BootstrapRow";
 
         protected override Task ConfigureClientProperties(BootstrapRowFormComponentClientProperties clientProperties)
         {
@@ -35,10 +36,6 @@ namespace Xperience.Community.BootstrapRowSection.Components.FormComponents.Boot
     }
 
     public class BootstrapRowFormComponentClientProperties : FormComponentClientProperties<IEnumerable<BootstrapColumnModel>>
-    {
-    }
-
-    public class BootstrapRowFormComponentAttribute : FormComponentAttribute
     {
     }
 }

@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Xperience.Community.BootstrapRowSection.Models;
+using Xperience.Accelerator.BootstrapRowSectionShared.Models;
 
-namespace Xperience.Community.BootstrapRowSection.Repositories
+namespace Xperience.Accelerator.BootstrapRowSection.Repositories
 {
     public class BootstrapRowContainerClasses : IDropDownOptionsProvider
     {
@@ -18,7 +18,7 @@ namespace Xperience.Community.BootstrapRowSection.Repositories
         }
         public Task<IEnumerable<DropDownOptionItem>> GetOptionItems()
         {
-            return Task.FromResult(_rowOptions.BackgroundItems);
+            return Task.FromResult(_rowOptions.BackgroundItems.Select(x=>new DropDownOptionItem { Text = x.Text, Value = x.Value}));
         }
     }
 }

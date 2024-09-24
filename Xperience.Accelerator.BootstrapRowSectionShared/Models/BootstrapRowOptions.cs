@@ -1,18 +1,17 @@
 ﻿using AngleSharp.Css.Dom;
-using Kentico.Xperience.Admin.Base.FormAnnotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Xperience.Community.BootstrapRowSection.Models
+namespace Xperience.Accelerator.BootstrapRowSectionShared.Models
 {
     public class BootstrapRowOptions : IBootstrapRowOptions
     {
-        public IEnumerable<DropDownOptionItem> BackgroundItems { get; set; } = Enumerable.Empty<DropDownOptionItem>();
+        public IEnumerable<BootstrapOptionItem> BackgroundItems { get; set; } = Enumerable.Empty<BootstrapOptionItem>();
 
-        public BootstrapRowOptions SetupBackgroundItems(IEnumerable<DropDownOptionItem> items)
+        public BootstrapRowOptions SetupBackgroundItems(IEnumerable<BootstrapOptionItem> items)
         {
             BackgroundItems = items;
             return this;
@@ -20,7 +19,7 @@ namespace Xperience.Community.BootstrapRowSection.Models
 
         public BootstrapRowOptions SetupBackgroundItems(IEnumerable<string> items)
         {
-            BackgroundItems = items.Select(x=>new DropDownOptionItem { Text = x, Value = x });
+            BackgroundItems = items.Select(x=>new BootstrapOptionItem { Text = x, Value = x });
             return this;
         }
     }

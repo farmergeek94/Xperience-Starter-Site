@@ -5,15 +5,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Xperience.Community.BootstrapRowSection.Components.FormComponents.BootstrapRowFormComponent;
-using Xperience.Community.BootstrapRowSection.Components.Sections.BootstrapRowSection;
-using Xperience.Community.BootstrapRowSection.Models;
-using Xperience.Community.BootstrapRowSection.Repositories;
+using Xperience.Accelerator.BootstrapRowSectionShared;
+using Xperience.Accelerator.BootstrapRowSectionShared.Models;
+using Xperience.Accelerator.BootstrapRowSection.Components.Sections.BootstrapRowSection;
+using Xperience.Accelerator.BootstrapRowSection.Repositories;
 
-[assembly: RegisterSection("Xperience.Community.InlineBootstrapSection", "Bootstrap Section", propertiesType: typeof(BootstrapRowSectionProperties), customViewName: "~/Components/Sections/BootstrapRowSection/_BootstrapRowSection.cshtml", Description = "A customizable bootstrap row", IconClass = "icon-layout")]
+[assembly: RegisterSection("Xperience.Community.InlineBootstrapSection", "Bootstrap Section", propertiesType: typeof(BootstrapRowSectionProperties), customViewName: "~/Sections/BootstrapRowSection/_BootstrapRowSection.cshtml", Description = "A customizable bootstrap row", IconClass = "icon-layout")]
 
 
-namespace Xperience.Community.BootstrapRowSection.Components.Sections.BootstrapRowSection
+namespace Xperience.Accelerator.BootstrapRowSection.Components.Sections.BootstrapRowSection
 {
     [FormCategory(Label = "Columns", Order = 1)]
     [FormCategory(Label = "Row", Order = 4, Collapsible = true, IsCollapsed = true)]

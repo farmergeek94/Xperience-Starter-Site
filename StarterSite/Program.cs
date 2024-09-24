@@ -14,7 +14,7 @@ using StarterSite.Logic.Context;
 using StarterSite.RCL;
 using System.Linq;
 using X;
-using Xperience.Community.BootstrapRowSection;
+using Xperience.Accelerator.BootstrapRowSectionShared;
 using Xperience.Community.ImageWidget;
 using HBS.Xperience.TransformableViewsShared;
 using HBS.Xperience.TransformableViews;

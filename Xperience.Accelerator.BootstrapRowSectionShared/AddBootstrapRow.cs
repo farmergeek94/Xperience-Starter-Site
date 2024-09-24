@@ -1,13 +1,13 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Kentico.Xperience.Admin.Base.FormAnnotations;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Xperience.Community.BootstrapRowSection.Models;
-using Xperience.Community.BootstrapRowSection.Repositories;
+using Xperience.Accelerator.BootstrapRowSectionShared.Models;
 
-namespace Xperience.Community.BootstrapRowSection
+namespace Xperience.Accelerator.BootstrapRowSectionShared
 {
     public static class AddBootstrapRow
     {
@@ -31,7 +31,7 @@ namespace Xperience.Community.BootstrapRowSection
                 };
                 rowOptions = new BootstrapRowOptions
                 {
-                    BackgroundItems = classes.Select(x => new Kentico.Xperience.Admin.Base.FormAnnotations.DropDownOptionItem { Text = x, Value = x })
+                    BackgroundItems = classes.Select(x => new BootstrapOptionItem { Text = x, Value = x })
                 };
             }
             else
@@ -41,5 +41,9 @@ namespace Xperience.Community.BootstrapRowSection
             services.AddSingleton<IBootstrapRowOptions>(rowOptions);
             return services;
         }
+    }
+
+    public class BootstrapRowFormComponentAttribute : FormComponentAttribute
+    {
     }
 }
