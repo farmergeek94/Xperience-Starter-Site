@@ -12,10 +12,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="/client/css/bundles/HeaderStyles.min.css" rel="stylesheet" />
     @await RenderSectionAsync("Head", required: false)
-    <routed-page>
-        <page-builder-styles />
-        <image-widget-styles />
-    </routed-page>
+    <page-builder-styles />
 </head>
 <body>
     @await RenderSectionAsync("Body", required: false)
@@ -48,9 +45,6 @@
     </footer>
     <script type="text/javascript" src="/client/js/bundles/FooterJS.min.js"></script>
     @await RenderSectionAsync("BodyEnd", required: false)
-    <routed-page>
-        <page-builder-scripts />
-        <image-widget-scripts />
-    </routed-page>
+    <page-builder-scripts />
 </body>
 </html>

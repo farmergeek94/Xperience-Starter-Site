@@ -4,27 +4,17 @@
     <Configurations>Debug;Release;QA</Configurations>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Kentico.Xperience.Admin" Version="29.5.0" />
-    <PackageReference Include="kentico.xperience.azurestorage" Version="29.5.0" />
-    <PackageReference Include="Kentico.Xperience.Core" Version="29.5.0" />
-    <PackageReference Include="kentico.xperience.imageprocessing" Version="29.5.0" />
-    <PackageReference Include="kentico.xperience.webapp" Version="29.5.0" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\XperienceComunity.TransformableViews\XperienceComunity.TransformableViewsAdmin\XperienceComunity.TransformableViewsAdmin.csproj" />
     <ProjectReference Include="..\..\XperienceComunity.TransformableViews\XperienceComunity.TransformableViewsShared\XperienceComunity.TransformableViewsShared.csproj" />
     <ProjectReference Include="..\..\XperienceComunity.TransformableViews\XperienceComunity.TransformableViews\XperienceComunity.TransformableViews.csproj" />
     <ProjectReference Include="..\StarterSite.Client\StarterSite.Client.csproj" />
-    <ProjectReference Include="..\StarterSite.Logic\StarterSite.Logic.csproj" />
-    <ProjectReference Include="..\StarterSite.Models\StarterSite.Models.csproj" />
-    <ProjectReference Include="..\StarterSite.RCL\StarterSite.RCL.csproj" />
-    <ProjectReference Include="..\StarterSite.Types\StarterSite.Types.csproj" />
-    <ProjectReference Include="..\Xperience.Accelerator.BootstrapRowSectionAdmin\Xperience.Accelerator.BootstrapRowSectionAdmin.csproj" />
-    <ProjectReference Include="..\Xperience.Accelerator.BootstrapRowSectionShared\Xperience.Accelerator.BootstrapRowSectionShared.csproj" />
-    <ProjectReference Include="..\Xperience.Accelerator.BootstrapRowSection\Xperience.Accelerator.BootstrapRowSection.csproj" />
-    <ProjectReference Include="..\Xperience.Community.ImageWidget\Xperience.Community.ImageWidget.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="wwwroot\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Xperience.Accelerator.BootstrapRowSection" Version="1.0.6" />
+    <PackageReference Include="Xperience.Accelerator.BootstrapRowSectionAdmin" Version="1.0.4" />
+    <PackageReference Include="Xperience.Accelerator.BootstrapRowSectionShared" Version="1.0.4" />
   </ItemGroup>
 </Project>
