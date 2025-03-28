@@ -1,0 +1,22 @@
+<h1>Import Worked</h1>
+<table class="table table-striped">
+    <tr>
+        <th>Class Name</th>
+        <th>Class Code Name</th>
+        <th>Class Table Name</th>
+    </tr>
+    @foreach (var item in Model.Items)
+    {
+        <tr>
+            <td>
+                @item.ClassDisplayName
+            </td>
+            <td>
+                @item.ClassName
+            </td>
+            <td>
+                @item.ClassTableName
+            </td>
+        </tr>
+    }
+</table>
